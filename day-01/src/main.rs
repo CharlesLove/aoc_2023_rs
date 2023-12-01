@@ -1,4 +1,4 @@
-use std::ptr::null;
+use core::panic;
 
 fn main() {
     println!("Hello, world!");
@@ -25,16 +25,29 @@ fn add_line(line: &str) -> u32 {
     }
 
     if digit_1 < 0 || digit_2 < 0 {
-        panic!("Incorrect values!");
+        panic!("Incorrect values with line = '{}'", &line);
     }
     combined_digit.push_str(&digit_1.to_string());
     combined_digit.push_str(&digit_2.to_string());
     combined_digit.parse().unwrap()
 }
 
+fn add_lines(lines: &str) -> u32 {
+    let mut sum = 0;
+    let split_lines = lines.split("\n");
+    for l in split_lines {
+        sum += add_line(&l.to_string());
+    }
+    sum
+}
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const TEST_LINES: &str = r#"1abc2
+    pqr3stu8vwx
+    a1b2c3d4e5f
+    treb7uchet"#;
 
     #[test]
     fn test_add() {
@@ -42,5 +55,9 @@ mod tests {
         assert_eq!(add_line("pqr3stu8vwx"), 38);
         assert_eq!(add_line("a1b2c3d4e5f"), 15);
         assert_eq!(add_line("treb7uchet"), 77);
+    }
+    #[test]
+    fn test_add_lines() {
+        assert_eq!(add_lines(TEST_LINES), 142);
     }
 }
