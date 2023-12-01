@@ -55,9 +55,8 @@ fn add_line_corrected(line: &str) -> u32 {
             if digit_1 == -1 {
                 digit_1 = c.to_digit(10).unwrap() as i32;
                 digit_2 = digit_1;
-            } else {
-                digit_2 = c.to_digit(10).unwrap() as i32;
             }
+            digit_2 = c.to_digit(10).unwrap() as i32;
             // a new numeric clears the current number string
             current_number_string = "".to_string();
         } else if c.is_ascii_alphabetic() {
@@ -71,10 +70,8 @@ fn add_line_corrected(line: &str) -> u32 {
                 if found_digit != -1 {
                     if digit_1 == -1 {
                         digit_1 = found_digit;
-                        digit_2 = digit_1;
-                    } else {
-                        digit_2 = found_digit;
                     }
+                    digit_2 = found_digit;
                     // we found a digit, so clear the current number string
                     current_number_string = "".to_string();
                 }
@@ -91,8 +88,8 @@ fn add_line_corrected(line: &str) -> u32 {
     }
 
     // if either digit is -1, the string doesn't have any numbers or is malformed
-    if digit_1 <= 0 || digit_2 <= 0 {
-        return 0;
+    if digit_1 < 0 || digit_2 < 0 {
+        panic!("Incorrect values with line = '{}'", &line);
     }
     combined_digit.push_str(&digit_1.to_string());
     combined_digit.push_str(&digit_2.to_string());
