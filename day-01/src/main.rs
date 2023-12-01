@@ -1,5 +1,5 @@
 use core::panic;
-use std::collections::{hash_map, HashMap};
+use std::collections::HashMap;
 use std::fs;
 
 fn main() {
@@ -38,7 +38,6 @@ fn add_line(line: &str) -> u32 {
     combined_digit.parse().unwrap()
 }
 
-// TODO: remove premature optimization
 fn add_line_corrected(line: &str) -> u32 {
     let mut digit_1: i32 = -1;
     let mut digit_2: i32 = -1;
@@ -46,7 +45,7 @@ fn add_line_corrected(line: &str) -> u32 {
 
     let mut current_number_string = "".to_owned();
 
-    // find first digit
+    // find first and last digits
     for c in line.chars() {
         if c.is_numeric() {
             if digit_1 == -1 {
@@ -74,18 +73,23 @@ fn add_line_corrected(line: &str) -> u32 {
                     current_number_string = "".to_string();
                 }
             } else {
-                // no progress made clear the current number string
+                // clear current number string to start fresh
                 current_number_string = "".to_string();
+                // check if current character makes match progress for
+                // another number
+                if check_match_progress(&c.to_string()) {
+                    current_number_string.push_str(&c.to_string());
+                }
             }
         }
     }
     // find last digit
-    for c in line.chars().rev() {
-        if c.is_numeric() {
-            digit_2 = c.to_digit(10).unwrap() as i32;
-            break;
-        }
-    }
+    // for c in line.chars().rev() {
+    //     if c.is_numeric() {
+    //         digit_2 = c.to_digit(10).unwrap() as i32;
+    //         break;
+    //     }
+    // }
 
     if digit_1 < 0 || digit_2 < 0 {
         panic!("Incorrect values with line = '{}'", &line);
@@ -107,7 +111,7 @@ fn add_lines_corrected(lines: &str) -> u32 {
     let mut sum = 0;
     let split_lines = lines.split("\n");
     for l in split_lines {
-        sum += add_line(&l.to_string());
+        sum += add_line_corrected(&l.to_string());
     }
     sum
 }
