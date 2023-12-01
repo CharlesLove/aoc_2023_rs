@@ -7,7 +7,11 @@ fn main() {
     // For some reason there is an empty line at the end
     println!("Part 1:");
     println!("{}", add_lines(lines.trim_end()));
+
+    // 53097 was too low
+    // 56089 was too high
     println!("Part 2:");
+    println!("{}", add_lines_corrected(lines.trim_end()));
 }
 
 fn add_line(line: &str) -> u32 {
@@ -50,6 +54,7 @@ fn add_line_corrected(line: &str) -> u32 {
         if c.is_numeric() {
             if digit_1 == -1 {
                 digit_1 = c.to_digit(10).unwrap() as i32;
+                digit_2 = digit_1;
             } else {
                 digit_2 = c.to_digit(10).unwrap() as i32;
             }
@@ -66,6 +71,7 @@ fn add_line_corrected(line: &str) -> u32 {
                 if found_digit != -1 {
                     if digit_1 == -1 {
                         digit_1 = found_digit;
+                        digit_2 = digit_1;
                     } else {
                         digit_2 = found_digit;
                     }
@@ -83,16 +89,10 @@ fn add_line_corrected(line: &str) -> u32 {
             }
         }
     }
-    // find last digit
-    // for c in line.chars().rev() {
-    //     if c.is_numeric() {
-    //         digit_2 = c.to_digit(10).unwrap() as i32;
-    //         break;
-    //     }
-    // }
 
-    if digit_1 < 0 || digit_2 < 0 {
-        panic!("Incorrect values with line = '{}'", &line);
+    // if either digit is -1, the string doesn't have any numbers or is malformed
+    if digit_1 <= 0 || digit_2 <= 0 {
+        return 0;
     }
     combined_digit.push_str(&digit_1.to_string());
     combined_digit.push_str(&digit_2.to_string());
@@ -111,6 +111,7 @@ fn add_lines_corrected(lines: &str) -> u32 {
     let mut sum = 0;
     let split_lines = lines.split("\n");
     for l in split_lines {
+        let line_value = add_line_corrected(&l.to_string());
         sum += add_line_corrected(&l.to_string());
     }
     sum
@@ -183,6 +184,9 @@ zoneight234
         assert_eq!(add_line_corrected("4nineeightseven2"), 42);
         assert_eq!(add_line_corrected("zoneight234"), 14);
         assert_eq!(add_line_corrected("7pqrstsixteen"), 76);
+
+        assert_eq!(add_line_corrected("3n"), 33);
+        assert_eq!(add_line_corrected("faxthreedexa"), 33);
     }
     #[test]
     fn test_add_lines() {
