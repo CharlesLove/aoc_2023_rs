@@ -114,9 +114,19 @@ fn add_lines_corrected(lines: &str) -> u32 {
 
 // check if making progress towards match
 fn check_match_progress(checked_string: &str) -> bool {
-    // match checked_string {
-        
-    // }
+    if "one".starts_with(checked_string)
+        || "two".starts_with(checked_string)
+        || "three".starts_with(checked_string)
+        || "four".starts_with(checked_string)
+        || "five".starts_with(checked_string)
+        || "six".starts_with(checked_string)
+        || "seven".starts_with(checked_string)
+        || "eight".starts_with(checked_string)
+        || "nine".starts_with(checked_string)
+    {
+        return true;
+    }
+    false
 }
 // check if match is made
 fn check_match(checked_string: &str) -> i32 {
@@ -142,15 +152,16 @@ mod tests {
     use super::*;
 
     const TEST_LINES1: &str = r#"1abc2
-    pqr3stu8vwx
-    a1b2c3d4e5f
-    treb7uchet"#;
-    const TEST_LINES2: &str = r#"two1nine\neightwothree
-    abcone2threexyz
-    xtwone3four
-    4nineeightseven2
-    zoneight234
-    7pqrstsixteen"#;
+pqr3stu8vwx
+a1b2c3d4e5f
+treb7uchet"#;
+    const TEST_LINES2: &str = r#"two1nine
+eightwothree
+abcone2threexyz
+xtwone3four
+4nineeightseven2
+zoneight234
+7pqrstsixteen"#;
 
     #[test]
     fn test_add() {
