@@ -1,7 +1,10 @@
 use core::panic;
+use std::fs;
 
 fn main() {
-    println!("Hello, world!");
+    let lines = fs::read_to_string("./inputs/input1.txt").unwrap();
+    // For some reason there is an empty line at the end
+    println!("{}", add_lines(lines.trim_end()));
 }
 
 fn add_line(line: &str) -> u32 {
