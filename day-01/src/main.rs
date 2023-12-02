@@ -1,6 +1,6 @@
 use core::panic;
 use std::collections::HashMap;
-use std::fs;
+use std::{fs, iter};
 
 fn main() {
     let lines = fs::read_to_string("./inputs/input1.txt").unwrap();
@@ -9,6 +9,7 @@ fn main() {
     println!("{}", add_lines(lines.trim_end()));
 
     // 53097 was too low
+    // 56001 was too low
     // 56089 was too high
     println!("Part 2:");
     println!("{}", add_lines_corrected(lines.trim_end()));
@@ -42,6 +43,8 @@ fn add_line(line: &str) -> u32 {
     combined_digit.parse().unwrap()
 }
 
+// TODO: do a similar backwards and forward to part 1
+
 fn add_line_corrected(line: &str) -> u32 {
     let mut digit_1: i32 = -1;
     let mut digit_2: i32 = -1;
@@ -50,11 +53,13 @@ fn add_line_corrected(line: &str) -> u32 {
     let mut current_number_string = "".to_owned();
 
     // find first and last digits
-    for c in line.chars() {
+    let mut cur = 0;
+    while cur < line.len() {
+        // for (mut i, c) in line.chars().enumerate() {
+        let c = line.chars().nth(cur).unwrap();
         if c.is_numeric() {
             if digit_1 == -1 {
                 digit_1 = c.to_digit(10).unwrap() as i32;
-                digit_2 = digit_1;
             }
             digit_2 = c.to_digit(10).unwrap() as i32;
             // a new numeric clears the current number string
@@ -76,15 +81,15 @@ fn add_line_corrected(line: &str) -> u32 {
                     current_number_string = "".to_string();
                 }
             } else {
-                // clear current number string to start fresh
-                current_number_string = "".to_string();
-                // check if current character makes match progress for
-                // another number
-                if check_match_progress(&c.to_string()) {
-                    current_number_string.push_str(&c.to_string());
-                }
+                // start at 2nd index of number string
+                cur = cur - (current_number_string.len() - 1);
+                current_number_string = current_number_string.remove(0).to_string();
+
+                // if we don't continue the iterator doesn't get set correctly
+                continue;
             }
         }
+        cur += 1;
     }
 
     // if either digit is -1, the string doesn't have any numbers or is malformed
@@ -108,7 +113,7 @@ fn add_lines_corrected(lines: &str) -> u32 {
     let mut sum = 0;
     let split_lines = lines.split("\n");
     for l in split_lines {
-        let line_value = add_line_corrected(&l.to_string());
+        //let line_value = add_line_corrected(&l.to_string());
         sum += add_line_corrected(&l.to_string());
     }
     sum
