@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::fs;
 
 fn main() {
-    let lines = fs::read_to_string("./inputs/input1.txt").unwrap();
+    let lines = fs::read_to_string("./day-01/inputs/input1.txt").unwrap();
     // For some reason there is an empty line at the end
     println!("Part 1:");
     println!("{}", add_lines(lines.trim_end()));
