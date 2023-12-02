@@ -147,22 +147,18 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
 
     #[test]
     fn test_possibilities() {
-        assert!(
-            is_line_possible(
-                "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green",
-                12,
-                13,
-                14
-            )
-        );
-        assert!(
-            !is_line_possible(
-                "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red",
-                12,
-                13,
-                14
-            )
-        );
+        assert!(is_line_possible(
+            "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green",
+            12,
+            13,
+            14
+        ));
+        assert!(!is_line_possible(
+            "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red",
+            12,
+            13,
+            14
+        ));
     }
 
     #[test]
