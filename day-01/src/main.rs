@@ -1,5 +1,4 @@
 #![warn(clippy::pedantic)]
-use core::panic;
 use std::collections::HashMap;
 use std::fs;
 
@@ -17,28 +16,25 @@ fn main() {
 }
 
 fn add_line(line: &str) -> u32 {
-    let mut digit_1: i32 = -1;
-    let mut digit_2: i32 = -1;
-    let mut combined_digit = "".to_owned();
+    let mut digit_1: u32 = 0;
+    let mut digit_2: u32 = 0;
+    let mut combined_digit = String::new();
 
     // find first digit
     for c in line.chars() {
         if c.is_numeric() {
-            digit_1 = c.to_digit(10).unwrap() as i32;
+            digit_1 = c.to_digit(10).unwrap();
             break;
         }
     }
     // find last digit
     for c in line.chars().rev() {
         if c.is_numeric() {
-            digit_2 = c.to_digit(10).unwrap() as i32;
+            digit_2 = c.to_digit(10).unwrap();
             break;
         }
     }
 
-    if digit_1 < 0 || digit_2 < 0 {
-        panic!("Incorrect values with line = '{}'", &line);
-    }
     combined_digit.push_str(&digit_1.to_string());
     combined_digit.push_str(&digit_2.to_string());
     combined_digit.parse().unwrap()
@@ -51,9 +47,9 @@ fn add_line(line: &str) -> u32 {
 // 4. Else, see if starts with is in dictionary, if so return it and quit
 
 fn add_line_corrected(line: &str) -> u32 {
-    let mut digit_1: i32 = 0;
-    let mut digit_2: i32 = 0;
-    let mut combined_digit = "".to_owned();
+    let mut digit_1: u32 = 0;
+    let mut digit_2: u32 = 0;
+    let mut combined_digit = String::new();
 
     let mut i = 0;
     while i < line.len() {
@@ -61,9 +57,9 @@ fn add_line_corrected(line: &str) -> u32 {
         let first_char = cur_slice.chars().next().unwrap();
         if first_char.is_ascii_digit() {
             if digit_1 == 0 {
-                digit_1 = first_char.to_digit(10).unwrap() as i32;
+                digit_1 = first_char.to_digit(10).unwrap();
             }
-            digit_2 = first_char.to_digit(10).unwrap() as i32;
+            digit_2 = first_char.to_digit(10).unwrap();
         } else {
             let cur_match = find_match(cur_slice);
             if cur_match > 0 {
@@ -99,8 +95,8 @@ fn add_lines_corrected(lines: &str) -> u32 {
     sum
 }
 
-fn find_match(checked_string: &str) -> i32 {
-    let number_spellings: HashMap<&str, i32> = HashMap::from([
+fn find_match(checked_string: &str) -> u32 {
+    let number_spellings: HashMap<&str, u32> = HashMap::from([
         ("one", 1),
         ("two", 2),
         ("three", 3),
@@ -112,7 +108,7 @@ fn find_match(checked_string: &str) -> i32 {
         ("nine", 9),
     ]);
 
-    for (key, _value) in number_spellings.clone().into_iter() {
+    for (key, _value) in number_spellings.clone() {
         if checked_string.starts_with(key) {
             return number_spellings[key];
         }
