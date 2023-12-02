@@ -1,3 +1,4 @@
+#![warn(clippy::pedantic)]
 use core::panic;
 use std::collections::HashMap;
 use std::fs;
@@ -57,14 +58,14 @@ fn add_line_corrected(line: &str) -> u32 {
     let mut i = 0;
     while i < line.len() {
         let cur_slice = &line[i..];
-        let first_char = cur_slice.chars().nth(0).unwrap();
+        let first_char = cur_slice.chars().next().unwrap();
         if first_char.is_ascii_digit() {
             if digit_1 == 0 {
                 digit_1 = first_char.to_digit(10).unwrap() as i32;
             }
             digit_2 = first_char.to_digit(10).unwrap() as i32;
         } else {
-            let cur_match = find_match(&cur_slice);
+            let cur_match = find_match(cur_slice);
             if cur_match > 0 {
                 if digit_1 == 0 {
                     digit_1 = cur_match;
@@ -82,18 +83,18 @@ fn add_line_corrected(line: &str) -> u32 {
 
 fn add_lines(lines: &str) -> u32 {
     let mut sum = 0;
-    let split_lines = lines.split("\n");
+    let split_lines = lines.split('\n');
     for l in split_lines {
-        sum += add_line(&l.to_string());
+        sum += add_line(l);
     }
     sum
 }
 fn add_lines_corrected(lines: &str) -> u32 {
     let mut sum = 0;
-    let split_lines = lines.split("\n");
+    let split_lines = lines.split('\n');
     for l in split_lines {
         //let line_value = add_line_corrected(&l.to_string());
-        sum += add_line_corrected(&l.to_string());
+        sum += add_line_corrected(l);
     }
     sum
 }
@@ -111,30 +112,12 @@ fn find_match(checked_string: &str) -> i32 {
         ("nine", 9),
     ]);
 
-    for (key, value) in number_spellings.clone().into_iter() {
+    for (key, _value) in number_spellings.clone().into_iter() {
         if checked_string.starts_with(key) {
             return number_spellings[key];
         }
     }
     0
-}
-// check if match is made
-fn check_match(checked_string: &str) -> i32 {
-    let number_spellings: HashMap<&str, i32> = HashMap::from([
-        ("one", 1),
-        ("two", 2),
-        ("three", 3),
-        ("four", 4),
-        ("five", 5),
-        ("six", 6),
-        ("seven", 7),
-        ("eight", 8),
-        ("nine", 9),
-    ]);
-    if number_spellings.contains_key(checked_string) {
-        return number_spellings[checked_string];
-    }
-    -1
 }
 
 #[cfg(test)]
@@ -186,14 +169,5 @@ zoneight234
     #[test]
     fn test_add_lines_corrected() {
         assert_eq!(add_lines_corrected(TEST_LINES2), 281);
-    }
-
-    #[test]
-    fn test_matches() {
-        assert_eq!(check_match("one"), 1);
-        assert_eq!(check_match("two"), 2);
-
-        assert_eq!(check_match("on"), -1);
-        assert_eq!(check_match("twx"), -1);
     }
 }
