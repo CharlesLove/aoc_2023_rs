@@ -1,6 +1,6 @@
 use core::panic;
 use std::collections::HashMap;
-use std::{fs, iter};
+use std::fs;
 
 fn main() {
     let lines = fs::read_to_string("./inputs/input1.txt").unwrap();
@@ -42,138 +42,39 @@ fn add_line(line: &str) -> u32 {
     combined_digit.push_str(&digit_2.to_string());
     combined_digit.parse().unwrap()
 }
+
+// Simplification game plan
+// 1. Iterate through length of line string
+// 2. take the current iterator and create a string slice from there to end of line string
+// 3. If first position is digit, store it and quit the loop
+// 4. Else, see if starts with is in dictionary, if so return it and quit
+
 fn add_line_corrected(line: &str) -> u32 {
-    let mut digit_1: i32 = -1;
-    let mut digit_2: i32 = -1;
+    let mut digit_1: i32 = 0;
+    let mut digit_2: i32 = 0;
     let mut combined_digit = "".to_owned();
 
-    let mut current_number_string = "".to_owned();
-
-    // find first digit
-    let mut cur = 0;
-    while cur < line.len() {
-        let c = line.chars().nth(cur).unwrap();
-        if c.is_numeric() {
-            digit_1 = c.to_digit(10).unwrap() as i32;
-            break;
-        } else if c.is_ascii_alphabetic() {
-            current_number_string.push_str(&c.to_string());
-            if check_match_progress(&current_number_string, false) {
-                // we're making progress...
-                // check if we've found a match
-                let found_digit = check_match(&current_number_string);
-                if found_digit != -1 {
-                    if digit_1 == -1 {
-                        digit_1 = found_digit;
-                    }
-                    // we found a digit, so break
-                    break;
+    let mut i = 0;
+    while i < line.len() {
+        let cur_slice = &line[i..];
+        let first_char = cur_slice.chars().nth(0).unwrap();
+        if first_char.is_ascii_digit() {
+            if digit_1 == 0 {
+                digit_1 = first_char.to_digit(10).unwrap() as i32;
+            }
+            digit_2 = first_char.to_digit(10).unwrap() as i32;
+        } else {
+            let cur_match = find_match(&cur_slice);
+            if cur_match > 0 {
+                if digit_1 == 0 {
+                    digit_1 = cur_match;
                 }
-            } else {
-                // go next index past string start
-                cur = cur - (current_number_string.len() - 1);
-                current_number_string = "".to_string();
-                // if we don't continue the iterator doesn't get set correctly
+                digit_2 = cur_match;
             }
         }
-        cur += 1;
-    }
-    current_number_string = "".to_owned();
-
-    // find last digit
-    cur = line.len() - 1;
-    while cur >= 0 {
-        let c = line.chars().nth(cur).unwrap();
-        if c.is_numeric() {
-            digit_2 = c.to_digit(10).unwrap() as i32;
-            break;
-        } else if c.is_ascii_alphabetic() {
-            // add to front of string
-            current_number_string = c.to_string() + &current_number_string;
-            if check_match_progress(&current_number_string, true) {
-                // we're making progress...
-                // check if we've found a match
-                let found_digit = check_match(&current_number_string);
-                if found_digit != -1 {
-                    if digit_2 == -1 {
-                        digit_2 = found_digit;
-                    }
-                    // we found a digit, so break
-                    break;
-                }
-            } else {
-                // go next index past string start
-                // TODO: figure out how to do this iteration correctly
-                cur = cur - (current_number_string.len() - 1);
-                current_number_string = "".to_string();
-                // if we don't continue the iterator doesn't get set correctly
-                continue;
-            }
-        }
-        cur -= 1;
+        i += 1;
     }
 
-    if digit_1 < 0 || digit_2 < 0 {
-        panic!("Incorrect values with line = '{}'", &line);
-    }
-    combined_digit.push_str(&digit_1.to_string());
-    combined_digit.push_str(&digit_2.to_string());
-    combined_digit.parse().unwrap()
-}
-
-// TODO: do a similar backwards and forward to part 1
-
-fn add_line_corrected_complicated(line: &str) -> u32 {
-    let mut digit_1: i32 = -1;
-    let mut digit_2: i32 = -1;
-    let mut combined_digit = "".to_owned();
-
-    let mut current_number_string = "".to_owned();
-
-    // find first and last digits
-    let mut cur = 0;
-    while cur < line.len() {
-        // for (mut i, c) in line.chars().enumerate() {
-        let c = line.chars().nth(cur).unwrap();
-        if c.is_numeric() {
-            if digit_1 == -1 {
-                digit_1 = c.to_digit(10).unwrap() as i32;
-            }
-            digit_2 = c.to_digit(10).unwrap() as i32;
-            // a new numeric clears the current number string
-            current_number_string = "".to_string();
-        } else if c.is_ascii_alphabetic() {
-            current_number_string.push_str(&c.to_string());
-            // check if current string is matching or starting to match
-            // a number
-            if check_match_progress(&current_number_string, false) {
-                // we're making progress...
-                // check if we've found a match
-                let found_digit = check_match(&current_number_string);
-                if found_digit != -1 {
-                    if digit_1 == -1 {
-                        digit_1 = found_digit;
-                    }
-                    digit_2 = found_digit;
-                    // we found a digit, so clear the current number string
-                    current_number_string = "".to_string();
-                }
-            } else {
-                // start at 2nd index of number string
-                cur = cur - (current_number_string.len() - 1);
-                current_number_string = current_number_string.remove(0).to_string();
-
-                // if we don't continue the iterator doesn't get set correctly
-                continue;
-            }
-        }
-        cur += 1;
-    }
-
-    // if either digit is -1, the string doesn't have any numbers or is malformed
-    if digit_1 < 0 || digit_2 < 0 {
-        panic!("Incorrect values with line = '{}'", &line);
-    }
     combined_digit.push_str(&digit_1.to_string());
     combined_digit.push_str(&digit_2.to_string());
     combined_digit.parse().unwrap()
@@ -197,36 +98,25 @@ fn add_lines_corrected(lines: &str) -> u32 {
     sum
 }
 
-// check if making progress towards match
-fn check_match_progress(checked_string: &str, is_reverse: bool) -> bool {
-    if is_reverse {
-        if "one".ends_with(checked_string)
-            || "two".ends_with(checked_string)
-            || "three".ends_with(checked_string)
-            || "four".ends_with(checked_string)
-            || "five".ends_with(checked_string)
-            || "six".ends_with(checked_string)
-            || "seven".ends_with(checked_string)
-            || "eight".ends_with(checked_string)
-            || "nine".ends_with(checked_string)
-        {
-            return true;
-        }
-    } else {
-        if "one".starts_with(checked_string)
-            || "two".starts_with(checked_string)
-            || "three".starts_with(checked_string)
-            || "four".starts_with(checked_string)
-            || "five".starts_with(checked_string)
-            || "six".starts_with(checked_string)
-            || "seven".starts_with(checked_string)
-            || "eight".starts_with(checked_string)
-            || "nine".starts_with(checked_string)
-        {
-            return true;
+fn find_match(checked_string: &str) -> i32 {
+    let number_spellings: HashMap<&str, i32> = HashMap::from([
+        ("one", 1),
+        ("two", 2),
+        ("three", 3),
+        ("four", 4),
+        ("five", 5),
+        ("six", 6),
+        ("seven", 7),
+        ("eight", 8),
+        ("nine", 9),
+    ]);
+
+    for (key, value) in number_spellings.clone().into_iter() {
+        if checked_string.starts_with(key) {
+            return number_spellings[key];
         }
     }
-    false
+    0
 }
 // check if match is made
 fn check_match(checked_string: &str) -> i32 {
@@ -305,14 +195,5 @@ zoneight234
 
         assert_eq!(check_match("on"), -1);
         assert_eq!(check_match("twx"), -1);
-    }
-    #[test]
-    fn test_progress() {
-        assert_eq!(check_match_progress("o", false), true);
-        assert_eq!(check_match_progress("on", false), true);
-        assert_eq!(check_match_progress("one", false), true);
-
-        assert_eq!(check_match_progress("onx", false), false);
-        assert_eq!(check_match_progress("x", false), false);
     }
 }
