@@ -1,11 +1,12 @@
 #![warn(clippy::pedantic)]
-use std::{fs, io::BufRead};
+use std::fs;
 
 fn main() {
     let binding = fs::read_to_string("./inputs/input.txt").unwrap();
     let input = binding.trim();
 
-    print!("Part 1: {}", get_sum(input).to_string());
+    println!("Part 1:\n{}", get_sum(input).to_string());
+    println!("Part 2:\n{}", get_sum_powers(input).to_string());
 }
 
 fn is_line_possible(cur_line: &str, total_red: i32, total_green: i32, total_blue: i32) -> bool {
@@ -28,13 +29,13 @@ fn is_line_possible(cur_line: &str, total_red: i32, total_green: i32, total_blue
         let color = split_data[1];
 
         match color {
-            "green" => {
-                if number > total_green {
+            "red" => {
+                if number > total_red {
                     return false;
                 }
             }
-            "red" => {
-                if number > total_red {
+            "green" => {
+                if number > total_green {
                     return false;
                 }
             }
@@ -65,6 +66,59 @@ fn get_sum(input: &str) -> i32 {
         }
     }
     sum
+}
+fn get_sum_powers(input: &str) -> i32 {
+    let lines: Vec<&str> = input.lines().collect();
+    let mut sum = 0;
+    for l in lines {
+        sum += get_line_power(l);
+    }
+    sum
+}
+
+fn get_line_power(cur_line: &str) -> i32 {
+    let mut min_red = 0;
+    let mut min_green = 0;
+    let mut min_blue = 0;
+
+    // First split and only use data after colon ':'
+    let mut important_data = cur_line.split(":").nth(1).unwrap().to_string();
+    // change semicolon ';' to comma ',' for easier parsing
+    important_data = important_data.replace(";", ",");
+    // then split between commas and trim white space in front
+    let color_vector: Vec<&str> = important_data.split(",").collect();
+    // then iterate through this list and compare the split.nth(1) to
+    // get color and split.nth(0) to get number
+    for mut l in color_vector {
+        // trim data
+        l = l.trim();
+        // split data
+        let split_data: Vec<&str> = l.split_whitespace().collect();
+        // get number
+        let number: i32 = split_data[0].parse().unwrap();
+        // get color
+        let color = split_data[1];
+
+        match color {
+            "red" => {
+                if number > min_red {
+                    min_red = number;
+                }
+            }
+            "green" => {
+                if number > min_green {
+                    min_green = number;
+                }
+            }
+            "blue" => {
+                if number > min_blue {
+                    min_blue = number;
+                }
+            }
+            &_ => panic!("Something was parsed incorrectly!"),
+        }
+    }
+    min_red * min_green * min_blue
 }
 
 #[cfg(test)]
@@ -116,5 +170,23 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"#;
     #[test]
     fn test_sum() {
         assert_eq!(get_sum(TEST_LINES1), 8);
+    }
+    #[test]
+    fn test_sum_powers() {
+        assert_eq!(get_sum_powers(TEST_LINES1), 2286);
+    }
+
+    #[test]
+    fn test_powers() {
+        assert_eq!(
+            get_line_power("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"),
+            48
+        );
+        assert_eq!(
+            get_line_power(
+                "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red"
+            ),
+            1560
+        );
     }
 }
