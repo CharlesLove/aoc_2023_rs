@@ -5,17 +5,17 @@ fn main() {
     let binding = fs::read_to_string("./inputs/input.txt").unwrap();
     let input = binding.trim();
 
-    println!("Part 1:\n{}", get_sum(input).to_string());
-    println!("Part 2:\n{}", get_sum_powers(input).to_string());
+    println!("Part 1:\n{}", get_sum(input));
+    println!("Part 2:\n{}", get_sum_powers(input));
 }
 
 fn is_line_possible(cur_line: &str, total_red: i32, total_green: i32, total_blue: i32) -> bool {
     // First split and only use data after colon ':'
-    let mut important_data = cur_line.split(":").nth(1).unwrap().to_string();
+    let mut important_data = cur_line.split(':').nth(1).unwrap().to_string();
     // change semicolon ';' to comma ',' for easier parsing
-    important_data = important_data.replace(";", ",");
+    important_data = important_data.replace(';', ",");
     // then split between commas and trim white space in front
-    let color_vector: Vec<&str> = important_data.split(",").collect();
+    let color_vector: Vec<&str> = important_data.split(',').collect();
     // then iterate through this list and compare the split.nth(1) to
     // get color and split.nth(0) to get number
     for mut l in color_vector {
@@ -52,8 +52,8 @@ fn is_line_possible(cur_line: &str, total_red: i32, total_green: i32, total_blue
 }
 
 fn get_id(cur_line: &str) -> i32 {
-    let game_id_split = cur_line.split(":").nth(0).unwrap();
-    game_id_split.split(" ").nth(1).unwrap().parse().unwrap()
+    let game_id_split = cur_line.split(':').next().unwrap();
+    game_id_split.split(' ').nth(1).unwrap().parse().unwrap()
 }
 
 fn get_sum(input: &str) -> i32 {
@@ -82,11 +82,11 @@ fn get_line_power(cur_line: &str) -> i32 {
     let mut min_blue = 0;
 
     // First split and only use data after colon ':'
-    let mut important_data = cur_line.split(":").nth(1).unwrap().to_string();
+    let mut important_data = cur_line.split(':').nth(1).unwrap().to_string();
     // change semicolon ';' to comma ',' for easier parsing
-    important_data = important_data.replace(";", ",");
+    important_data = important_data.replace(';', ",");
     // then split between commas and trim white space in front
-    let color_vector: Vec<&str> = important_data.split(",").collect();
+    let color_vector: Vec<&str> = important_data.split(',').collect();
     // then iterate through this list and compare the split.nth(1) to
     // get color and split.nth(0) to get number
     for mut l in color_vector {
@@ -124,12 +124,12 @@ fn get_line_power(cur_line: &str) -> i32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    const TEST_LINES1: &str = r#"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+    const TEST_LINES1: &str = r"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
 Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
 Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
-Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"#;
-    const TEST_LINES2: &str = r#""#;
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
+    const TEST_LINES2: &str = r"";
     #[test]
     fn test_ids() {
         assert_eq!(
@@ -147,23 +147,21 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"#;
 
     #[test]
     fn test_possibilities() {
-        assert_eq!(
+        assert!(
             is_line_possible(
                 "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green",
                 12,
                 13,
                 14
-            ),
-            true
+            )
         );
-        assert_eq!(
-            is_line_possible(
+        assert!(
+            !is_line_possible(
                 "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red",
                 12,
                 13,
                 14
-            ),
-            false
+            )
         );
     }
 
