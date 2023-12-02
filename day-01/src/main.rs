@@ -184,6 +184,9 @@ zoneight234
 
         assert_eq!(add_line_corrected("3n"), 33);
         assert_eq!(add_line_corrected("faxthreedexa"), 33);
+
+        // this case has been leading to inflated sums
+        assert_eq!(add_line_corrected("2ctfonekpns"), 21);
     }
     #[test]
     fn test_add_lines() {
