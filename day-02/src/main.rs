@@ -1,10 +1,70 @@
 #![warn(clippy::pedantic)]
-use std::fs;
+use std::{fs, io::BufRead};
 
 fn main() {
-    let lines = fs::read_to_string("./inputs/input.txt").unwrap();
+    let binding = fs::read_to_string("./inputs/input.txt").unwrap();
+    let input = binding.trim();
 
-    print!("{}", lines);
+    print!("Part 1: {}", get_sum(input).to_string());
+}
+
+fn is_line_possible(cur_line: &str, total_red: i32, total_green: i32, total_blue: i32) -> bool {
+    // First split and only use data after colon ':'
+    let mut important_data = cur_line.split(":").nth(1).unwrap().to_string();
+    // change semicolon ';' to comma ',' for easier parsing
+    important_data = important_data.replace(";", ",");
+    // then split between commas and trim white space in front
+    let color_vector: Vec<&str> = important_data.split(",").collect();
+    // then iterate through this list and compare the split.nth(1) to
+    // get color and split.nth(0) to get number
+    for mut l in color_vector {
+        // trim data
+        l = l.trim();
+        // split data
+        let split_data: Vec<&str> = l.split_whitespace().collect();
+        // get number
+        let number: i32 = split_data[0].parse().unwrap();
+        // get color
+        let color = split_data[1];
+
+        match color {
+            "green" => {
+                if number > total_green {
+                    return false;
+                }
+            }
+            "red" => {
+                if number > total_red {
+                    return false;
+                }
+            }
+            "blue" => {
+                if number > total_blue {
+                    return false;
+                }
+            }
+            &_ => panic!("Something was parsed incorrectly!"),
+        }
+    }
+
+    true
+}
+
+fn get_id(cur_line: &str) -> i32 {
+    let game_id_split = cur_line.split(":").nth(0).unwrap();
+    game_id_split.split(" ").nth(1).unwrap().parse().unwrap()
+}
+
+fn get_sum(input: &str) -> i32 {
+    let lines: Vec<&str> = input.lines().collect();
+    let mut sum = 0;
+    for l in lines {
+        let id = get_id(l);
+        if is_line_possible(l, 12, 13, 14) {
+            sum += id;
+        }
+    }
+    sum
 }
 
 #[cfg(test)]
@@ -17,7 +77,44 @@ Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
 Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"#;
     const TEST_LINES2: &str = r#""#;
     #[test]
-    fn test_something() {
-        assert_eq!(true, true)
+    fn test_ids() {
+        assert_eq!(
+            get_id("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"),
+            1
+        );
+        assert_eq!(
+            get_id(
+                "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+        "
+            ),
+            4
+        );
+    }
+
+    #[test]
+    fn test_possibilities() {
+        assert_eq!(
+            is_line_possible(
+                "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green",
+                12,
+                13,
+                14
+            ),
+            true
+        );
+        assert_eq!(
+            is_line_possible(
+                "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red",
+                12,
+                13,
+                14
+            ),
+            false
+        );
+    }
+
+    #[test]
+    fn test_sum() {
+        assert_eq!(get_sum(TEST_LINES1), 8);
     }
 }
