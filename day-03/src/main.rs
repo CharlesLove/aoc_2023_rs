@@ -326,13 +326,28 @@ fn get_sum(input: &str) -> u32 {
                             {
                                 summable = true;
                             }
+
+                            // if first digit, only check:
+                            //      up-left, up, left, down-left,
+                            //      down
+                            // otherwise check:
+                            //      up, up-right, right, down,
+                            //      down-right
+                            // match y_range {
+                            //     -1 => surrounding_string_above.push(checked_char.unwrap()),
+                            //     0 => surrounding_string_on.push(checked_char.unwrap()),
+                            //     1 => surrounding_string_below.push(checked_char.unwrap()),
+                            //     _ => todo!(),
+                            // }
                         }
                     }
                 }
             } else if cur_digit_string.len() > 0 {
                 if summable {
+                    //println!("{cur_digit_string}");
+                    print_surrounding(input, cur_x, cur_y, cur_digit_string.len());
                     sum += &cur_digit_string.parse().unwrap();
-                    println!("{cur_digit_string}");
+                    //println!("{surrounding_string_above}\n{surrounding_string_on}\n{surrounding_string_below}\n");
                 }
                 summable = false;
                 cur_digit_string = "".to_string();
@@ -341,6 +356,37 @@ fn get_sum(input: &str) -> u32 {
     }
 
     sum
+}
+
+fn print_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) {
+    let mut surrounding_string = "".to_string();
+    let mut top_bound = 0;
+    if cur_y as i32 - 1 > 0 {
+        top_bound = cur_y - 1;
+    }
+    let mut left_bound = 0;
+    if cur_x as i32 - length as i32 - 1 > 0 {
+        left_bound = cur_x - length - 1;
+    }
+    let mut right_bound = 0;
+    if cur_x < get_width(input) {
+        right_bound = cur_x;
+    }
+    let mut bottom_bound = 0;
+    if cur_y + 1 < get_height(input) {
+        bottom_bound = cur_y + 1;
+    }
+
+    for y in top_bound..=bottom_bound {
+        for x in left_bound..=right_bound {
+            let cur_char = input.lines().nth(y).unwrap().chars().nth(x).unwrap();
+            surrounding_string.push(cur_char);
+        }
+        surrounding_string.push('\n');
+    }
+
+    println!("{cur_x},{cur_y}");
+    println!("{surrounding_string}");
 }
 
 #[cfg(test)]
