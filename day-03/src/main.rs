@@ -165,9 +165,9 @@ fn get_check_dir(input: &str, checked_x: usize, checked_y: usize) -> Option<char
 // instead of all this grid stuff, why not just operate on input?
 fn parse_input(input: &str) {
     let mut cur_y = 0;
-    for cur_line in input.lines() {
+    for cur_line in &mut input.lines() {
         let mut cur_x = 0;
-        for cur_char in cur_line.chars() {
+        for cur_char in &mut cur_line.chars() {
             if is_symbol(cur_char) {
                 //println!("{}", cur_char);
                 let mut checked_x = cur_x;
@@ -191,6 +191,18 @@ fn parse_input(input: &str) {
                 if check_dir.is_some() {
                     if check_dir.unwrap().is_ascii_digit() {
                         println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
+
+                        // TODO: get full number
+                        let mut num_string = check_dir.unwrap().to_string();
+                        // go left
+                        let l_i = 1;
+                        let left_char = get_check_dir(input, checked_x - l_i, checked_y);
+                        while left_char.is_some() {
+                            num_string.insert_str(0, &left_char.unwrap().to_string());
+
+                            // change input to period if possible
+                            // if not, have to do number first approach
+                        }
                     }
                 }
                 // up right
