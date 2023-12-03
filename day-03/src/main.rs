@@ -284,22 +284,56 @@ fn parse_input(mut input: String, width: usize, height: usize) {
 }
 
 fn get_sum(input: &str) -> u32 {
-    let sum = 0;
+    let mut sum = 0;
     // change iterate through input: line by line, char by char
     // if we find a digit, look around it if symbol found mark summable as true
     // build out the string digit until we hit a non-digit
     // then if summable add to sum
 
-    let mut cur_digit_string = "".to_string();
-    let summable = false;
+    let input_width = get_width(input);
+    let input_height = get_height(input);
 
-    for cur_line in input.lines() {
-        for cur_char in cur_line.chars() {
+    let mut cur_digit_string = "".to_string();
+    let mut summable = false;
+
+    for cur_y in 0..input_height {
+        let cur_line = input.lines().nth(cur_y).unwrap();
+        for cur_x in 0..input_width {
+            let cur_char = cur_line.chars().nth(cur_x).unwrap();
             //println!("{}", cur_char);
             if cur_char.is_ascii_digit() {
                 cur_digit_string.push(cur_char);
+
+                // check around digit to see if summable
+                for y_range in -1..=1 {
+                    let checked_y: i32 = cur_y as i32 + y_range;
+                    if checked_y < 0 || checked_y >= input_height as i32 {
+                        continue;
+                    }
+                    for x_range in -1..=1 {
+                        let checked_x: i32 = cur_x as i32 + x_range;
+                        if checked_x < 0 || checked_x >= input_width as i32 {
+                            continue;
+                        }
+
+                        let checked_char =
+                            get_check_dir(input, checked_x as usize, checked_y as usize);
+
+                        if checked_char.is_some() {
+                            if checked_char.unwrap().is_ascii_punctuation()
+                                && checked_char.unwrap() != '.'
+                            {
+                                summable = true;
+                            }
+                        }
+                    }
+                }
             } else if cur_digit_string.len() > 0 {
-                println!("{cur_digit_string}");
+                if summable {
+                    sum += &cur_digit_string.parse().unwrap();
+                    println!("{cur_digit_string}");
+                }
+                summable = false;
                 cur_digit_string = "".to_string();
             }
         }
@@ -371,6 +405,7 @@ mod tests {
 
     #[test]
     fn test_get_sum() {
+        assert_ne!(get_sum(TEST_LINES1), 4533);
         assert_eq!(get_sum(TEST_LINES1), 4361);
     }
 }
