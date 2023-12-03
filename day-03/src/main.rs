@@ -406,7 +406,7 @@ mod tests {
 
     #[test]
     fn test_get_sum() {
-        assert_ne!(get_sum(TEST_LINES1), 4533);
+        //assert_ne!(get_sum(TEST_LINES1), 4533);
         assert_eq!(get_sum(TEST_LINES1), 4361);
     }
 }
