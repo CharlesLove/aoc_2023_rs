@@ -193,6 +193,60 @@ fn parse_input(input: &str) {
                         println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
                     }
                 }
+                // up right
+                checked_x = cur_x + 1;
+                checked_y = cur_y - 1;
+                check_dir = get_check_dir(input, checked_x, checked_y);
+                if check_dir.is_some() {
+                    if check_dir.unwrap().is_ascii_digit() {
+                        println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
+                    }
+                }
+                // left
+                checked_x = cur_x - 1;
+                checked_y = cur_y;
+                check_dir = get_check_dir(input, checked_x, checked_y);
+                if check_dir.is_some() {
+                    if check_dir.unwrap().is_ascii_digit() {
+                        println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
+                    }
+                }
+                // right
+                checked_x = cur_x + 1;
+                checked_y = cur_y;
+                check_dir = get_check_dir(input, checked_x, checked_y);
+                if check_dir.is_some() {
+                    if check_dir.unwrap().is_ascii_digit() {
+                        println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
+                    }
+                }
+                // down left
+                checked_x = cur_x - 1;
+                checked_y = cur_y + 1;
+                check_dir = get_check_dir(input, checked_x, checked_y);
+                if check_dir.is_some() {
+                    if check_dir.unwrap().is_ascii_digit() {
+                        println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
+                    }
+                }
+                // down
+                checked_x = cur_x;
+                checked_y = cur_y + 1;
+                check_dir = get_check_dir(input, checked_x, checked_y);
+                if check_dir.is_some() {
+                    if check_dir.unwrap().is_ascii_digit() {
+                        println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
+                    }
+                }
+                // down right
+                checked_x = cur_x + 1;
+                checked_y = cur_y + 1;
+                check_dir = get_check_dir(input, checked_x, checked_y);
+                if check_dir.is_some() {
+                    if check_dir.unwrap().is_ascii_digit() {
+                        println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
+                    }
+                }
             }
             cur_x += 1;
         }
@@ -252,6 +306,7 @@ mod tests {
 
     #[test]
     fn test_parse_input() {
+        //assert_eq!('+'.is_ascii_punctuation(), true);
         parse_input(TEST_LINES1);
         assert_eq!(0, 4361);
     }
