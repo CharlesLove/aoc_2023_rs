@@ -46,7 +46,8 @@ fn main() {
     let binding = fs::read_to_string("./day-03/inputs/input.txt").unwrap();
     let input = binding.trim();
 
-    //println!("Part 1:\n{}", get_sum(input));
+    // 1382231 is too high
+    println!("Part 1:\n{}", get_sum(input));
     //println!("Part 2:\n{}", get_sum_powers(input));
     //let width = get_width(&input);
     //let height = get_height(&input);
