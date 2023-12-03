@@ -1,5 +1,5 @@
 #![warn(clippy::pedantic)]
-use std::fs;
+use std::{borrow::BorrowMut, fs};
 
 #[derive(Debug, Clone, Copy)]
 struct Coords_2D {
@@ -44,20 +44,21 @@ struct Number {
 
 fn main() {
     let binding = fs::read_to_string("./day-03/inputs/input.txt").unwrap();
-    let input = binding.trim();
+    let input = binding.trim().to_string();
 
     //println!("Part 1:\n{}", get_sum(input));
     //println!("Part 2:\n{}", get_sum_powers(input));
-    let width = input.lines().nth(0).unwrap().len();
+    let width = get_width(&input);
+    let height = get_height(&input);
 
-    let grid = get_grid_from_input(input);
+    //let grid = get_grid_from_input(&input);
     // parse_grid(
     //     grid,
     //     width.try_into().unwrap(),
     //     input.lines().count().try_into().unwrap(),
     // );
 
-    parse_input(input);
+    //parse_input(input, width, height);
 }
 
 fn get_grid_from_input(input: &str) -> Vec<char> {
@@ -162,23 +163,37 @@ fn get_check_dir(input: &str, checked_x: usize, checked_y: usize) -> Option<char
     input.lines().nth(checked_y).unwrap().chars().nth(checked_x)
 }
 
+fn get_width(input: &str) -> usize {
+    input.lines().nth(0).unwrap().len()
+}
+
+fn get_height(input: &str) -> usize {
+    input.lines().count()
+}
+
 // instead of all this grid stuff, why not just operate on input?
-fn parse_input(input: &str) {
-    let mut cur_y = 0;
-    for cur_line in &mut input.lines() {
-        let mut cur_x = 0;
-        for cur_char in &mut cur_line.chars() {
+fn parse_input(mut input: String, width: usize, height: usize) {
+    for cur_y in 0..height {
+        let cur_line = input.lines().nth(cur_y).unwrap();
+        for cur_x in 0..width {
+            let cur_char = input
+                .lines()
+                .nth(cur_y)
+                .unwrap()
+                .chars()
+                .nth(cur_x)
+                .unwrap();
             if is_symbol(cur_char) {
                 //println!("{}", cur_char);
                 let mut checked_x = cur_x;
                 let mut checked_y = cur_y;
 
-                let mut check_dir = get_check_dir(input, checked_x, checked_y);
+                let mut check_dir = get_check_dir(&input, checked_x, checked_y);
 
                 // up left
                 checked_x = cur_x - 1;
                 checked_y = cur_y - 1;
-                check_dir = get_check_dir(input, checked_x, checked_y);
+                check_dir = get_check_dir(&input, checked_x, checked_y);
                 if check_dir.is_some() {
                     if check_dir.unwrap().is_ascii_digit() {
                         println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
@@ -187,7 +202,7 @@ fn parse_input(input: &str) {
                 // up
                 checked_x = cur_x;
                 checked_y = cur_y - 1;
-                check_dir = get_check_dir(input, checked_x, checked_y);
+                check_dir = get_check_dir(&input, checked_x, checked_y);
                 if check_dir.is_some() {
                     if check_dir.unwrap().is_ascii_digit() {
                         println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
@@ -195,20 +210,24 @@ fn parse_input(input: &str) {
                         // TODO: get full number
                         let mut num_string = check_dir.unwrap().to_string();
                         // go left
-                        let l_i = 1;
-                        let left_char = get_check_dir(input, checked_x - l_i, checked_y);
+                        let mut l_i = 1;
+                        let mut left_char = get_check_dir(&input, checked_x - l_i, checked_y);
                         while left_char.is_some() {
                             num_string.insert_str(0, &left_char.unwrap().to_string());
 
                             // change input to period if possible
                             // if not, have to do number first approach
+                            //input.replace_range(2..2, "+");
+
+                            l_i += 1;
+                            left_char = get_check_dir(&input, checked_x - l_i, checked_y);
                         }
                     }
                 }
                 // up right
                 checked_x = cur_x + 1;
                 checked_y = cur_y - 1;
-                check_dir = get_check_dir(input, checked_x, checked_y);
+                check_dir = get_check_dir(&input, checked_x, checked_y);
                 if check_dir.is_some() {
                     if check_dir.unwrap().is_ascii_digit() {
                         println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
@@ -217,7 +236,7 @@ fn parse_input(input: &str) {
                 // left
                 checked_x = cur_x - 1;
                 checked_y = cur_y;
-                check_dir = get_check_dir(input, checked_x, checked_y);
+                check_dir = get_check_dir(&input, checked_x, checked_y);
                 if check_dir.is_some() {
                     if check_dir.unwrap().is_ascii_digit() {
                         println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
@@ -226,7 +245,7 @@ fn parse_input(input: &str) {
                 // right
                 checked_x = cur_x + 1;
                 checked_y = cur_y;
-                check_dir = get_check_dir(input, checked_x, checked_y);
+                check_dir = get_check_dir(&input, checked_x, checked_y);
                 if check_dir.is_some() {
                     if check_dir.unwrap().is_ascii_digit() {
                         println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
@@ -235,7 +254,7 @@ fn parse_input(input: &str) {
                 // down left
                 checked_x = cur_x - 1;
                 checked_y = cur_y + 1;
-                check_dir = get_check_dir(input, checked_x, checked_y);
+                check_dir = get_check_dir(&input, checked_x, checked_y);
                 if check_dir.is_some() {
                     if check_dir.unwrap().is_ascii_digit() {
                         println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
@@ -244,7 +263,7 @@ fn parse_input(input: &str) {
                 // down
                 checked_x = cur_x;
                 checked_y = cur_y + 1;
-                check_dir = get_check_dir(input, checked_x, checked_y);
+                check_dir = get_check_dir(&input, checked_x, checked_y);
                 if check_dir.is_some() {
                     if check_dir.unwrap().is_ascii_digit() {
                         println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
@@ -253,17 +272,25 @@ fn parse_input(input: &str) {
                 // down right
                 checked_x = cur_x + 1;
                 checked_y = cur_y + 1;
-                check_dir = get_check_dir(input, checked_x, checked_y);
+                check_dir = get_check_dir(&input, checked_x, checked_y);
                 if check_dir.is_some() {
                     if check_dir.unwrap().is_ascii_digit() {
                         println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
                     }
                 }
             }
-            cur_x += 1;
         }
-        cur_y += 1;
     }
+}
+
+fn get_sum(input: &str) -> u32 {
+    let sum = 0;
+    // change iterate through input: line by line, char by char
+    // if we find a digit, look around it if symbol found mark summable as true
+    // build out the string digit until we hit a non-digit
+    // then if summable add to sum
+
+    sum
 }
 
 #[cfg(test)]
@@ -280,46 +307,55 @@ mod tests {
 ...$.*....
 .664.598..";
 
-    #[test]
-    fn test_grid_dimensions() {
-        let test_grid = get_grid_from_input(TEST_LINES1);
-        assert_eq!(test_grid.len(), 100);
-    }
-    #[test]
-    fn test_coords() {
-        let width = 10;
-        let coords_test1 = get_coords_from_1D(width, 99);
-        assert_eq!(coords_test1.x, 9);
-        assert_eq!(coords_test1.y, 9);
-        let coords_test2 = get_coords_from_1D(width, 54);
-        assert_eq!(coords_test2.x, 4);
-        assert_eq!(coords_test2.y, 5);
+    // #[test]
+    // fn test_grid_dimensions() {
+    //     let test_grid = get_grid_from_input(TEST_LINES1);
+    //     assert_eq!(test_grid.len(), 100);
+    // }
+    // #[test]
+    // fn test_coords() {
+    //     let width = 10;
+    //     let coords_test1 = get_coords_from_1D(width, 99);
+    //     assert_eq!(coords_test1.x, 9);
+    //     assert_eq!(coords_test1.y, 9);
+    //     let coords_test2 = get_coords_from_1D(width, 54);
+    //     assert_eq!(coords_test2.x, 4);
+    //     assert_eq!(coords_test2.y, 5);
 
-        assert_eq!(get_1D_from_coords(width, Coords_2D { x: 9, y: 9 }), 99);
-        assert_eq!(get_1D_from_coords(width, Coords_2D { x: 4, y: 5 }), 54);
-    }
+    //     assert_eq!(get_1D_from_coords(width, Coords_2D { x: 9, y: 9 }), 99);
+    //     assert_eq!(get_1D_from_coords(width, Coords_2D { x: 4, y: 5 }), 54);
+    // }
+
+    // #[test]
+    // fn test_count_symbols() {
+    //     assert_eq!(count_symbols(TEST_LINES1), 6)
+    // }
+
+    // #[test]
+    // fn test_grid_parse() {
+    //     let width = TEST_LINES1.lines().nth(0).unwrap().len();
+    //     let test_grid = get_grid_from_input(TEST_LINES1);
+    //     let sum = parse_grid(
+    //         test_grid,
+    //         width.try_into().unwrap(),
+    //         TEST_LINES1.lines().count().try_into().unwrap(),
+    //     );
+    //     assert_eq!(sum, 4361);
+    // }
+
+    // #[test]
+    // fn test_parse_input() {
+    //     //assert_eq!('+'.is_ascii_punctuation(), true);
+    //     parse_input(
+    //         TEST_LINES1.to_string(),
+    //         get_width(TEST_LINES1),
+    //         get_height(TEST_LINES1),
+    //     );
+    //     assert_eq!(0, 4361);
+    // }
 
     #[test]
-    fn test_count_symbols() {
-        assert_eq!(count_symbols(TEST_LINES1), 6)
-    }
-
-    #[test]
-    fn test_grid_parse() {
-        let width = TEST_LINES1.lines().nth(0).unwrap().len();
-        let test_grid = get_grid_from_input(TEST_LINES1);
-        let sum = parse_grid(
-            test_grid,
-            width.try_into().unwrap(),
-            TEST_LINES1.lines().count().try_into().unwrap(),
-        );
-        assert_eq!(sum, 4361);
-    }
-
-    #[test]
-    fn test_parse_input() {
-        //assert_eq!('+'.is_ascii_punctuation(), true);
-        parse_input(TEST_LINES1);
-        assert_eq!(0, 4361);
+    fn test_get_sum() {
+        assert_eq!(get_sum(TEST_LINES1), 4361);
     }
 }
