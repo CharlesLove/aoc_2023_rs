@@ -158,6 +158,10 @@ fn count_symbols(input: &str) -> u32 {
     symbol_count
 }
 
+fn get_check_dir(input: &str, checked_x: usize, checked_y: usize) -> Option<char> {
+    input.lines().nth(checked_y).unwrap().chars().nth(checked_x)
+}
+
 // instead of all this grid stuff, why not just operate on input?
 fn parse_input(input: &str) {
     let mut cur_y = 0;
@@ -166,11 +170,27 @@ fn parse_input(input: &str) {
         for cur_char in cur_line.chars() {
             if is_symbol(cur_char) {
                 //println!("{}", cur_char);
+                let mut checked_x = cur_x;
+                let mut checked_y = cur_y;
+
+                let mut check_dir = get_check_dir(input, checked_x, checked_y);
+
                 // up left
-                let check_up_left = input.lines().nth(cur_y - 1).unwrap().chars().nth(cur_x - 1);
-                if check_up_left.is_some() {
-                    if check_up_left.unwrap().is_ascii_digit() {
-                        println!("{} at {}, {}", check_up_left.unwrap(), cur_x - 1, cur_y - 1);
+                checked_x = cur_x - 1;
+                checked_y = cur_y - 1;
+                check_dir = get_check_dir(input, checked_x, checked_y);
+                if check_dir.is_some() {
+                    if check_dir.unwrap().is_ascii_digit() {
+                        println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
+                    }
+                }
+                // up
+                checked_x = cur_x;
+                checked_y = cur_y - 1;
+                check_dir = get_check_dir(input, checked_x, checked_y);
+                if check_dir.is_some() {
+                    if check_dir.unwrap().is_ascii_digit() {
+                        println!("{} at {}, {}", check_dir.unwrap(), checked_x, checked_y);
                     }
                 }
             }
@@ -233,5 +253,6 @@ mod tests {
     #[test]
     fn test_parse_input() {
         parse_input(TEST_LINES1);
+        assert_eq!(0, 4361);
     }
 }
