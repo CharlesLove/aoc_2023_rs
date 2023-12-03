@@ -51,11 +51,13 @@ fn main() {
     let width = input.lines().nth(0).unwrap().len();
 
     let grid = get_grid_from_input(input);
-    parse_grid(
-        grid,
-        width.try_into().unwrap(),
-        input.lines().count().try_into().unwrap(),
-    );
+    // parse_grid(
+    //     grid,
+    //     width.try_into().unwrap(),
+    //     input.lines().count().try_into().unwrap(),
+    // );
+
+    parse_input(input);
 }
 
 fn get_grid_from_input(input: &str) -> Vec<char> {
@@ -156,6 +158,28 @@ fn count_symbols(input: &str) -> u32 {
     symbol_count
 }
 
+// instead of all this grid stuff, why not just operate on input?
+fn parse_input(input: &str) {
+    let mut cur_y = 0;
+    for cur_line in input.lines() {
+        let mut cur_x = 0;
+        for cur_char in cur_line.chars() {
+            if is_symbol(cur_char) {
+                //println!("{}", cur_char);
+                // up left
+                let check_up_left = input.lines().nth(cur_y - 1).unwrap().chars().nth(cur_x - 1);
+                if check_up_left.is_some() {
+                    if check_up_left.unwrap().is_ascii_digit() {
+                        println!("{} at {}, {}", check_up_left.unwrap(), cur_x - 1, cur_y - 1);
+                    }
+                }
+            }
+            cur_x += 1;
+        }
+        cur_y += 1;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -204,5 +228,10 @@ mod tests {
             TEST_LINES1.lines().count().try_into().unwrap(),
         );
         assert_eq!(sum, 4361);
+    }
+
+    #[test]
+    fn test_parse_input() {
+        parse_input(TEST_LINES1);
     }
 }
