@@ -379,13 +379,14 @@ fn print_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) {
 
     for y in top_bound..=bottom_bound {
         for x in left_bound..=right_bound {
+            //let cur_line = input.lines().nth(y).unwrap();
             let cur_char = input.lines().nth(y).unwrap().chars().nth(x).unwrap();
             surrounding_string.push(cur_char);
         }
         surrounding_string.push('\n');
     }
 
-    println!("{cur_x},{cur_y}");
+    println!("line: {cur_y} char: {cur_x}");
     println!("{surrounding_string}");
 }
 
