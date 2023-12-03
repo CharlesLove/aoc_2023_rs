@@ -1,6 +1,7 @@
 #![warn(clippy::pedantic)]
 use std::fs;
 
+#[derive(Debug, Clone, Copy)]
 struct Coords_2D {
     x: u32,
     y: u32,
@@ -50,7 +51,11 @@ fn main() {
     let width = input.lines().nth(0).unwrap().len();
 
     let grid = get_grid_from_input(input);
-    parse_grid(grid, width.try_into().unwrap());
+    parse_grid(
+        grid,
+        width.try_into().unwrap(),
+        input.lines().count().try_into().unwrap(),
+    );
 }
 
 fn get_grid_from_input(input: &str) -> Vec<char> {
@@ -65,42 +70,90 @@ fn get_grid_from_input(input: &str) -> Vec<char> {
         grid.push(current_char);
     }
 
-    println!("{:?}", grid);
-    println!("{:?}", input.lines().nth(0).unwrap());
-    println!("Width: {}", width);
-    println!("Height: {}", height);
-    println!("Grid length: {}", grid.len());
-    println!("Input length: {}", input.replace('\n', "").len());
+    // println!("{:?}", grid);
+    // println!("{:?}", input.lines().nth(0).unwrap());
+    // println!("Width: {}", width);
+    // println!("Height: {}", height);
+    // println!("Grid length: {}", grid.len());
+    // println!("Input length: {}", input.replace('\n', "").len());
 
     grid
 }
 
-fn parse_grid(grid: Vec<char>, width: u32) {
+fn parse_grid(grid: Vec<char>, width: u32, height: u32) -> u32 {
     // let symbols_vector: Vec<Coords_2D> = Vec::new();
     // let numbers_vector: Vec<Coords_2D> = Vec::new();
-    let sum = 0;
+    let sum: u32 = 0;
 
     let mut cur_cell = 0;
-    for cell_char in grid {
-        if cell_char != '.' && cell_char.is_ascii_punctuation() {
+    for cell_char in grid.iter() {
+        // we found a symbol
+        if is_symbol(*cell_char) {
             let coords = get_coords_from_1D(width, cur_cell);
-            println!("Found {cell_char} at {cur_cell} coords: {coords:?}");
+            // println!("Found {cell_char} at {coords:?}");
+
+            // check around the symbol for a number
+            // up left
+            {
+                let checked_x: i32 = (coords.x - 1).try_into().unwrap();
+                let checked_y: i32 = (coords.y - 1).try_into().unwrap();
+
+                if checked_x > 0 || checked_y > 0 {
+                    let checked_coords = Coords_2D {
+                        x: checked_x as u32,
+                        y: checked_y as u32,
+                    };
+                    let checked_cell = get_1D_from_coords(width, checked_coords);
+                    let checked_char = grid[checked_cell];
+
+                    if checked_char.is_ascii_digit() {
+                        println!("We found {checked_char} at {0:?}", checked_coords)
+                    }
+                }
+            }
+            // up
+            // up right
+            // left
+            // right
+            // down left
+            // down
+            // down right
         }
         cur_cell += 1;
     }
+
+    sum
 }
 
-fn get_coords_from_1D(width: u32, cell: u32) -> (u32, u32) {
-    // cell = y * w + x
-    let y = cell / width;
-    let x = cell - (y * width);
-    (x, y)
+fn is_symbol(c: char) -> bool {
+    if c != '.' && c.is_ascii_punctuation() {
+        return true;
+    }
+    false
 }
 
-fn get_1D_from_coords(width: u32, coords: (u32, u32)) -> u32 {
+fn get_coords_from_1D(width: u32, cell: u32) -> Coords_2D {
+    let mut coords: Coords_2D = Coords_2D { x: 0, y: 0 };
     // cell = y * w + x
-    let cell = coords.1 * width + coords.0;
+    coords.y = cell / width;
+    coords.x = cell - (coords.y * width);
+    coords
+}
+
+fn get_1D_from_coords(width: u32, coords: Coords_2D) -> usize {
+    // cell = y * w + x
+    let cell: usize = (coords.y * width + coords.x).try_into().unwrap();
     cell
+}
+
+fn count_symbols(input: &str) -> u32 {
+    let mut symbol_count = 0;
+    for cur_char in input.replace('\n', "").chars() {
+        if is_symbol(cur_char) {
+            symbol_count += 1;
+        }
+    }
+    symbol_count
 }
 
 #[cfg(test)]
@@ -125,16 +178,31 @@ mod tests {
     #[test]
     fn test_coords() {
         let width = 10;
-        assert_eq!(get_coords_from_1D(width, 99), (9, 9));
-        assert_eq!(get_coords_from_1D(width, 54), (4, 5));
+        let coords_test1 = get_coords_from_1D(width, 99);
+        assert_eq!(coords_test1.x, 9);
+        assert_eq!(coords_test1.y, 9);
+        let coords_test2 = get_coords_from_1D(width, 54);
+        assert_eq!(coords_test2.x, 4);
+        assert_eq!(coords_test2.y, 5);
 
-        assert_eq!(get_1D_from_coords(width, (9, 9)), 99);
-        assert_eq!(get_1D_from_coords(width, (4, 5)), 54);
+        assert_eq!(get_1D_from_coords(width, Coords_2D { x: 9, y: 9 }), 99);
+        assert_eq!(get_1D_from_coords(width, Coords_2D { x: 4, y: 5 }), 54);
     }
+
     #[test]
-    fn test_symbols() {
+    fn test_count_symbols() {
+        assert_eq!(count_symbols(TEST_LINES1), 6)
+    }
+
+    #[test]
+    fn test_grid_parse() {
         let width = TEST_LINES1.lines().nth(0).unwrap().len();
         let test_grid = get_grid_from_input(TEST_LINES1);
-        //let symbol_vect =
+        let sum = parse_grid(
+            test_grid,
+            width.try_into().unwrap(),
+            TEST_LINES1.lines().count().try_into().unwrap(),
+        );
+        assert_eq!(sum, 4361);
     }
 }
