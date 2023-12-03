@@ -44,12 +44,12 @@ struct Number {
 
 fn main() {
     let binding = fs::read_to_string("./day-03/inputs/input.txt").unwrap();
-    let input = binding.trim().to_string();
+    let input = binding.trim();
 
     //println!("Part 1:\n{}", get_sum(input));
     //println!("Part 2:\n{}", get_sum_powers(input));
-    let width = get_width(&input);
-    let height = get_height(&input);
+    //let width = get_width(&input);
+    //let height = get_height(&input);
 
     //let grid = get_grid_from_input(&input);
     // parse_grid(
@@ -289,6 +289,21 @@ fn get_sum(input: &str) -> u32 {
     // if we find a digit, look around it if symbol found mark summable as true
     // build out the string digit until we hit a non-digit
     // then if summable add to sum
+
+    let mut cur_digit_string = "".to_string();
+    let summable = false;
+
+    for cur_line in input.lines() {
+        for cur_char in cur_line.chars() {
+            //println!("{}", cur_char);
+            if cur_char.is_ascii_digit() {
+                cur_digit_string.push(cur_char);
+            } else if cur_digit_string.len() > 0 {
+                println!("{cur_digit_string}");
+                cur_digit_string = "".to_string();
+            }
+        }
+    }
 
     sum
 }
