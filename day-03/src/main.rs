@@ -29,11 +29,11 @@ fn check_surrounding(input: &str, cur_x: i32, cur_y: i32, length: i32) -> bool {
     let mut is_summable = false;
     let mut surrounding_string = String::new();
     let mut top_bound = 0;
-    if cur_y as i32 - 1 > 0 {
+    if cur_y - 1 > 0 {
         top_bound = cur_y - 1;
     }
     let mut left_bound = 0;
-    if cur_x as i32 - length as i32 - 1 > 0 {
+    if cur_x - length - 1 > 0 {
         left_bound = cur_x - length - 1;
     }
     let mut right_bound = get_width(input) - 1;
@@ -77,8 +77,8 @@ fn find_numbers_sum(input: &str) -> u32 {
     let mut cur_num_string = String::new();
 
     let mut cur_x;
-    let mut cur_y = 0;
-    for line in input.lines() {
+    //let mut cur_y = 0;
+    for (cur_y, line) in input.lines().enumerate() {
         cur_x = 0;
         for ch in line.chars() {
             if ch.is_ascii_digit() {
@@ -87,7 +87,7 @@ fn find_numbers_sum(input: &str) -> u32 {
                 if check_surrounding(
                     input,
                     cur_x,
-                    cur_y,
+                    cur_y.try_into().unwrap(),
                     cur_num_string.len().try_into().unwrap(),
                 ) {
                     sum += &cur_num_string.parse().unwrap();
@@ -100,14 +100,13 @@ fn find_numbers_sum(input: &str) -> u32 {
             if check_surrounding(
                 input,
                 cur_x,
-                cur_y,
+                cur_y.try_into().unwrap(),
                 cur_num_string.len().try_into().unwrap(),
             ) {
                 sum += &cur_num_string.parse().unwrap();
             }
             cur_num_string = String::new();
         }
-        cur_y += 1;
     }
 
     sum
@@ -147,19 +146,17 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
             cur_x += 1;
         }
         if !cur_num_string.is_empty() {
-            get_gear_locations(
+            for location in get_gear_locations(
                 input,
                 cur_x,
                 cur_y,
                 cur_num_string.len().try_into().unwrap(),
-            )
-            .into_iter()
-            .for_each(|location| {
+            ) {
                 gear_hash
                     .entry(location)
                     .or_default()
                     .push(cur_num_string.parse().unwrap());
-            });
+            }
             cur_num_string = String::new();
         }
         cur_y += 1;
@@ -175,25 +172,24 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
 }
 
 fn get_gear_locations(input: &str, cur_x: i32, cur_y: i32, length: i32) -> Vec<Coords2D> {
-    let _has_gear = false;
     let mut surrounding_string = String::new();
     let mut top_bound = 0;
 
     let mut gear_locations: Vec<Coords2D> = Vec::new();
 
-    if cur_y as i32 - 1 > 0 {
+    if cur_y - 1 > 0 {
         top_bound = cur_y - 1;
     }
     let mut left_bound = 0;
-    if cur_x as i32 - length as i32 - 1 > 0 {
+    if cur_x - length - 1 > 0 {
         left_bound = cur_x - length - 1;
     }
     let mut right_bound = get_width(input) - 1;
-    if cur_x < get_width(input).try_into().unwrap() {
+    if cur_x < get_width(input) {
         right_bound = cur_x;
     }
     let mut bottom_bound = get_height(input) - 1;
-    if cur_y + 1 < get_height(input).try_into().unwrap() {
+    if cur_y + 1 < get_height(input) {
         bottom_bound = cur_y + 1;
     }
 
