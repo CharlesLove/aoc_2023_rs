@@ -345,7 +345,7 @@ fn get_sum(input: &str) -> u32 {
             } else if cur_digit_string.len() > 0 {
                 if summable {
                     //println!("{cur_digit_string}");
-                    print_surrounding(input, cur_x, cur_y, cur_digit_string.len());
+                    check_surrounding(input, cur_x, cur_y, cur_digit_string.len());
                     sum += &cur_digit_string.parse().unwrap();
                     //println!("{surrounding_string_above}\n{surrounding_string_on}\n{surrounding_string_below}\n");
                 }
@@ -358,7 +358,8 @@ fn get_sum(input: &str) -> u32 {
     sum
 }
 
-fn print_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) {
+fn check_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) -> bool {
+    let mut is_summable = false;
     let mut surrounding_string = "".to_string();
     let mut top_bound = 0;
     if cur_y as i32 - 1 > 0 {
@@ -368,11 +369,11 @@ fn print_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) {
     if cur_x as i32 - length as i32 - 1 > 0 {
         left_bound = cur_x - length - 1;
     }
-    let mut right_bound = 0;
+    let mut right_bound = get_width(input) - 1;
     if cur_x < get_width(input) {
         right_bound = cur_x;
     }
-    let mut bottom_bound = 0;
+    let mut bottom_bound = get_height(input) - 1;
     if cur_y + 1 < get_height(input) {
         bottom_bound = cur_y + 1;
     }
@@ -382,16 +383,22 @@ fn print_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) {
             //let cur_line = input.lines().nth(y).unwrap();
             let cur_char = input.lines().nth(y).unwrap().chars().nth(x).unwrap();
             surrounding_string.push(cur_char);
+
+            if cur_char.is_ascii_punctuation() && cur_char != '.' {
+                is_summable = true;
+            }
         }
         surrounding_string.push('\n');
     }
 
     println!("line: {cur_y} char: {cur_x}");
     println!("{surrounding_string}");
+
+    is_summable
 }
 
 fn find_numbers_sum(input: &str) -> u32 {
-    let sum: u32 = 0;
+    let mut sum: u32 = 0;
     let num_vec: Vec<&str> = Vec::new();
     let mut cur_num_string = "".to_string();
 
@@ -404,13 +411,17 @@ fn find_numbers_sum(input: &str) -> u32 {
                 cur_num_string.push(ch);
             } else {
                 if cur_num_string != "" {
-                    print_surrounding(input, cur_x, cur_y, cur_num_string.len());
+                    if check_surrounding(input, cur_x, cur_y, cur_num_string.len()) {
+                        sum += &cur_num_string.parse().unwrap();
+                    }
                     cur_num_string = "".to_string();
                 }
             }
             cur_x += 1;
         }
         if cur_num_string != "" {
+            check_surrounding(input, cur_x, cur_y, cur_num_string.len());
+            sum += &cur_num_string.parse().unwrap();
             cur_num_string = "".to_string();
         }
         cur_y += 1;
