@@ -46,8 +46,11 @@ fn main() {
     let binding = fs::read_to_string("./day-03/inputs/input.txt").unwrap();
     let input = binding.trim();
 
+    println!("{} {}", get_width(input), get_height(input));
+
     // 1382231 is too high
-    println!("Part 1:\n{}", get_sum(input));
+    // 550354 is too high too?
+    println!("Part 1:\n{}", find_numbers_sum(input));
     //println!("Part 2:\n{}", get_sum_powers(input));
     //let width = get_width(&input);
     //let height = get_height(&input);
@@ -384,15 +387,17 @@ fn check_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) -> 
             let cur_char = input.lines().nth(y).unwrap().chars().nth(x).unwrap();
             surrounding_string.push(cur_char);
 
-            if cur_char.is_ascii_punctuation() && cur_char != '.' {
+            if cur_char.is_ascii_punctuation() && cur_char != '\n' && cur_char != '.' {
                 is_summable = true;
             }
         }
         surrounding_string.push('\n');
     }
 
-    println!("line: {cur_y} char: {cur_x}");
-    println!("{surrounding_string}");
+    if is_summable {
+        println!("line: {cur_y} char: {cur_x}");
+        println!("{surrounding_string}");
+    }
 
     is_summable
 }
@@ -420,8 +425,9 @@ fn find_numbers_sum(input: &str) -> u32 {
             cur_x += 1;
         }
         if cur_num_string != "" {
-            check_surrounding(input, cur_x, cur_y, cur_num_string.len());
-            sum += &cur_num_string.parse().unwrap();
+            if check_surrounding(input, cur_x, cur_y, cur_num_string.len()) {
+                sum += &cur_num_string.parse().unwrap();
+            }
             cur_num_string = "".to_string();
         }
         cur_y += 1;
@@ -443,6 +449,16 @@ mod tests {
 ......755.
 ...$.*....
 .664.598..";
+    const TEST_LINES2: &str = r"467..114.
+...*.....
+..35..633
+......#..
+617*.....
+.....+.58
+..592....
+......755
+...$.*...
+.664.598.";
 
     // #[test]
     // fn test_grid_dimensions() {
@@ -494,6 +510,6 @@ mod tests {
     #[test]
     fn test_get_sum() {
         //assert_ne!(get_sum(TEST_LINES1), 4533);
-        assert_eq!(find_numbers_sum(TEST_LINES1), 4361);
+        assert_eq!(find_numbers_sum(TEST_LINES2), 4361);
     }
 }
