@@ -18,7 +18,7 @@ fn main() {
 }
 
 fn get_width(input: &str) -> usize {
-    input.lines().nth(0).unwrap().len()
+    input.lines().next().unwrap().len()
 }
 
 fn get_height(input: &str) -> usize {
@@ -27,7 +27,7 @@ fn get_height(input: &str) -> usize {
 
 fn check_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) -> bool {
     let mut is_summable = false;
-    let mut surrounding_string = "".to_string();
+    let mut surrounding_string = String::new();
     let mut top_bound = 0;
     if cur_y as i32 - 1 > 0 {
         top_bound = cur_y - 1;
@@ -68,7 +68,7 @@ fn check_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) -> 
 
 fn find_numbers_sum(input: &str) -> u32 {
     let mut sum: u32 = 0;
-    let mut cur_num_string = "".to_string();
+    let mut cur_num_string = String::new();
 
     let mut cur_x;
     let mut cur_y = 0;
@@ -77,21 +77,19 @@ fn find_numbers_sum(input: &str) -> u32 {
         for ch in line.chars() {
             if ch.is_ascii_digit() {
                 cur_num_string.push(ch);
-            } else {
-                if cur_num_string != "" {
-                    if check_surrounding(input, cur_x, cur_y, cur_num_string.len()) {
-                        sum += &cur_num_string.parse().unwrap();
-                    }
-                    cur_num_string = "".to_string();
+            } else if !cur_num_string.is_empty() {
+                if check_surrounding(input, cur_x, cur_y, cur_num_string.len()) {
+                    sum += &cur_num_string.parse().unwrap();
                 }
+                cur_num_string = String::new();
             }
             cur_x += 1;
         }
-        if cur_num_string != "" {
+        if !cur_num_string.is_empty() {
             if check_surrounding(input, cur_x, cur_y, cur_num_string.len()) {
                 sum += &cur_num_string.parse().unwrap();
             }
-            cur_num_string = "".to_string();
+            cur_num_string = String::new();
         }
         cur_y += 1;
     }
@@ -102,7 +100,7 @@ fn find_numbers_sum(input: &str) -> u32 {
 fn find_gear_ratio_sum(input: &str) -> u32 {
     let mut sum: u32 = 0;
 
-    let mut cur_num_string = "".to_string();
+    let mut cur_num_string = String::new();
 
     let mut gear_hash: HashMap<Coords2D, Vec<u32>> = HashMap::new();
 
@@ -113,39 +111,37 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
         for ch in line.chars() {
             if ch.is_ascii_digit() {
                 cur_num_string.push(ch);
-            } else {
-                if cur_num_string != "" {
-                    for location in get_gear_locations(input, cur_x, cur_y, cur_num_string.len()) {
-                        gear_hash
-                            .entry(location)
-                            .or_insert_with(Vec::new)
-                            .push(cur_num_string.parse().unwrap());
+            } else if !cur_num_string.is_empty() {
+                for location in get_gear_locations(input, cur_x, cur_y, cur_num_string.len()) {
+                    gear_hash
+                        .entry(location)
+                        .or_default()
+                        .push(cur_num_string.parse().unwrap());
 
-                        println!("Break");
-                    }
-                    // if get_gear_locations(input, cur_x, cur_y, cur_num_string.len()) {
-                    //     sum += &cur_num_string.parse().unwrap();
-                    // }
-                    cur_num_string = "".to_string();
+                    println!("Break");
                 }
+                // if get_gear_locations(input, cur_x, cur_y, cur_num_string.len()) {
+                //     sum += &cur_num_string.parse().unwrap();
+                // }
+                cur_num_string = String::new();
             }
             cur_x += 1;
         }
-        if cur_num_string != "" {
+        if !cur_num_string.is_empty() {
             for location in get_gear_locations(input, cur_x, cur_y, cur_num_string.len()) {
                 gear_hash
                     .entry(location)
-                    .or_insert_with(Vec::new)
+                    .or_default()
                     .push(cur_num_string.parse().unwrap());
 
                 println!("Break");
             }
-            cur_num_string = "".to_string();
+            cur_num_string = String::new();
         }
         cur_y += 1;
     }
 
-    for (key, mut value) in gear_hash {
+    for (_key, value) in gear_hash {
         if value.len() == 2 {
             let product: u32 = value.iter().product();
             sum += product;
@@ -155,8 +151,8 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
 }
 
 fn get_gear_locations(input: &str, cur_x: usize, cur_y: usize, length: usize) -> Vec<Coords2D> {
-    let mut has_gear = false;
-    let mut surrounding_string = "".to_string();
+    let _has_gear = false;
+    let mut surrounding_string = String::new();
     let mut top_bound = 0;
 
     let mut gear_locations: Vec<Coords2D> = Vec::new();
@@ -184,7 +180,7 @@ fn get_gear_locations(input: &str, cur_x: usize, cur_y: usize, length: usize) ->
             surrounding_string.push(cur_char);
 
             if cur_char == '*' {
-                gear_locations.push(Coords2D { x: x, y: y });
+                gear_locations.push(Coords2D { x, y });
             }
         }
         surrounding_string.push('\n');
@@ -234,6 +230,6 @@ mod tests {
     fn test_get_gear_sum() {
         //assert_ne!(get_sum(TEST_LINES1), 4533);
         //assert_eq!(find_gear_ratio_sum(TEST_LINES1), 4361);
-        assert_eq!(find_gear_ratio_sum(TEST_LINES2), 467835);
+        assert_eq!(find_gear_ratio_sum(TEST_LINES2), 467_835);
     }
 }
