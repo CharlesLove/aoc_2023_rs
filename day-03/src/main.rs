@@ -120,8 +120,7 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
     let mut gear_hash: HashMap<Coords2D, Vec<u32>> = HashMap::new();
 
     let mut cur_x;
-    let mut cur_y = 0;
-    for line in input.lines() {
+    for (cur_y, line) in input.lines().enumerate() {
         cur_x = 0;
         for ch in line.chars() {
             if ch.is_ascii_digit() {
@@ -130,7 +129,7 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
                 for location in get_gear_locations(
                     input,
                     cur_x,
-                    cur_y,
+                    cur_y.try_into().unwrap(),
                     cur_num_string.len().try_into().unwrap(),
                 ) {
                     gear_hash
@@ -149,7 +148,7 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
             for location in get_gear_locations(
                 input,
                 cur_x,
-                cur_y,
+                cur_y.try_into().unwrap(),
                 cur_num_string.len().try_into().unwrap(),
             ) {
                 gear_hash
@@ -159,7 +158,6 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
             }
             cur_num_string = String::new();
         }
-        cur_y += 1;
     }
 
     for (_key, value) in gear_hash {
