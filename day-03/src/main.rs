@@ -1,5 +1,5 @@
 #![warn(clippy::pedantic)]
-use std::{collections::HashMap, fs};
+use std::{collections::HashMap, fs, iter::Product};
 
 #[derive(Eq, Hash, PartialEq, Clone, Copy)]
 struct Coords2D {
@@ -11,12 +11,10 @@ fn main() {
     let binding = fs::read_to_string("./day-03/inputs/input.txt").unwrap();
     let input = binding.trim();
 
-    println!("{} {}", get_width(input), get_height(input));
-
     // 1382231 is too high
     // 550354 is too high too?
     println!("Part 1:\n{}", find_numbers_sum(input));
-    //println!("Part 2:\n{}", get_sum_powers(input));
+    println!("Part 2:\n{}", find_gear_ratio_sum(input));
 }
 
 fn get_width(input: &str) -> usize {
@@ -134,12 +132,24 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
             cur_x += 1;
         }
         if cur_num_string != "" {
-            if !get_gear_locations(input, cur_x, cur_y, cur_num_string.len()).is_empty() {
-                sum += &cur_num_string.parse().unwrap();
+            for location in get_gear_locations(input, cur_x, cur_y, cur_num_string.len()) {
+                gear_hash
+                    .entry(location)
+                    .or_insert_with(Vec::new)
+                    .push(cur_num_string.parse().unwrap());
+
+                println!("Break");
             }
             cur_num_string = "".to_string();
         }
         cur_y += 1;
+    }
+
+    for (key, mut value) in gear_hash {
+        if value.len() == 2 {
+            let product: u32 = value.iter().product();
+            sum += product;
+        }
     }
     sum
 }
@@ -224,6 +234,6 @@ mod tests {
     fn test_get_gear_sum() {
         //assert_ne!(get_sum(TEST_LINES1), 4533);
         //assert_eq!(find_gear_ratio_sum(TEST_LINES1), 4361);
-        assert_eq!(find_gear_ratio_sum(TEST_LINES2), 4361);
+        assert_eq!(find_gear_ratio_sum(TEST_LINES2), 467835);
     }
 }
