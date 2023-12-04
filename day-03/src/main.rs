@@ -387,7 +387,7 @@ fn check_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) -> 
             let cur_char = input.lines().nth(y).unwrap().chars().nth(x).unwrap();
             surrounding_string.push(cur_char);
 
-            if cur_char.is_ascii_punctuation() && cur_char != '\n' && cur_char != '.' {
+            if cur_char.is_ascii_punctuation() && cur_char != '.' {
                 is_summable = true;
             }
         }
