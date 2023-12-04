@@ -390,6 +390,35 @@ fn print_surrounding(input: &str, cur_x: usize, cur_y: usize, length: usize) {
     println!("{surrounding_string}");
 }
 
+fn find_numbers_sum(input: &str) -> u32 {
+    let sum: u32 = 0;
+    let num_vec: Vec<&str> = Vec::new();
+    let mut cur_num_string = "".to_string();
+
+    let mut cur_x = 0;
+    let mut cur_y = 0;
+    for line in input.lines() {
+        cur_x = 0;
+        for ch in line.chars() {
+            if ch.is_ascii_digit() {
+                cur_num_string.push(ch);
+            } else {
+                if cur_num_string != "" {
+                    print_surrounding(input, cur_x, cur_y, cur_num_string.len());
+                    cur_num_string = "".to_string();
+                }
+            }
+            cur_x += 1;
+        }
+        if cur_num_string != "" {
+            cur_num_string = "".to_string();
+        }
+        cur_y += 1;
+    }
+
+    sum
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -454,6 +483,6 @@ mod tests {
     #[test]
     fn test_get_sum() {
         //assert_ne!(get_sum(TEST_LINES1), 4533);
-        assert_eq!(get_sum(TEST_LINES1), 4361);
+        assert_eq!(find_numbers_sum(TEST_LINES1), 4361);
     }
 }
