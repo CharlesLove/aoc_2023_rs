@@ -42,7 +42,59 @@ fn part_one(input: &str) -> u32 {
     wins
 }
 fn part_two(input: &str) -> u32 {
-    0
+    let mut growing_input: Vec<&str> = input.lines().collect();
+
+    let mut cards = growing_input.len();
+    let mut processed_cards = 0;
+    while processed_cards < cards {
+        let card = growing_input[processed_cards];
+        let mut cur_card_wins = 0;
+
+        let card_number: usize = card
+            .split(':')
+            .next()
+            .unwrap()
+            .split_whitespace()
+            .last()
+            .unwrap()
+            .parse()
+            .unwrap();
+
+        //println!("{card_number}");
+
+        let mut useful_half = card.split(':').last().unwrap().split('|');
+        let winning_numbers: Vec<&str> = useful_half
+            .next()
+            .unwrap()
+            .trim()
+            .split_whitespace()
+            .collect();
+        let my_numbers: Vec<&str> = useful_half
+            .last()
+            .unwrap()
+            .trim()
+            .split_whitespace()
+            .collect();
+
+        for winning_num in winning_numbers {
+            for my_num in my_numbers.clone() {
+                if my_num == winning_num {
+                    cur_card_wins += 1;
+                }
+            }
+        }
+
+        for wins in 0..cur_card_wins {
+            growing_input.push(growing_input[card_number + wins])
+        }
+
+        cards = growing_input.len();
+
+        //println!("Processed {processed_cards} of {cards}");
+
+        processed_cards += 1;
+    }
+    cards.try_into().unwrap()
 }
 
 #[cfg(test)]
@@ -61,6 +113,6 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
     }
     #[test]
     fn test_two() {
-        assert_eq!(part_two(TEST_LINES1), 8);
+        assert_eq!(part_two(TEST_LINES1), 30);
     }
 }
