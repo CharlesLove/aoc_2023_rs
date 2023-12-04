@@ -1,5 +1,5 @@
 #![warn(clippy::pedantic)]
-use std::{collections::HashMap, fs, num};
+use std::{collections::HashMap, fs};
 
 fn main() {
     let binding = fs::read_to_string("./day-04/inputs/input.txt").unwrap();
@@ -15,18 +15,8 @@ fn part_one(input: &str) -> u32 {
         let mut cur_card_wins = 0;
         // cut off Card #: text
         let mut useful_half = card.split(':').last().unwrap().split('|');
-        let winning_numbers: Vec<&str> = useful_half
-            .next()
-            .unwrap()
-            .trim()
-            .split_whitespace()
-            .collect();
-        let my_numbers: Vec<&str> = useful_half
-            .last()
-            .unwrap()
-            .trim()
-            .split_whitespace()
-            .collect();
+        let winning_numbers: Vec<&str> = useful_half.next().unwrap().split_whitespace().collect();
+        let my_numbers: Vec<&str> = useful_half.last().unwrap().split_whitespace().collect();
 
         for winning_num in winning_numbers {
             for my_num in my_numbers.clone() {
@@ -50,9 +40,7 @@ fn part_two(input: &str) -> u32 {
     }
 
     for card in input.lines() {
-        let mut cur_card_matches = 0;
-
-        let mut card_number: usize = card
+        let card_number: usize = card
             .split(':')
             .next()
             .unwrap()
@@ -63,18 +51,8 @@ fn part_two(input: &str) -> u32 {
             .unwrap();
 
         let mut useful_half = card.split(':').last().unwrap().split('|');
-        let winning_numbers: Vec<&str> = useful_half
-            .next()
-            .unwrap()
-            .trim()
-            .split_whitespace()
-            .collect();
-        let my_numbers: Vec<&str> = useful_half
-            .last()
-            .unwrap()
-            .trim()
-            .split_whitespace()
-            .collect();
+        let winning_numbers: Vec<&str> = useful_half.next().unwrap().split_whitespace().collect();
+        let my_numbers: Vec<&str> = useful_half.last().unwrap().split_whitespace().collect();
 
         let mut matches = 0;
         for winning_num in winning_numbers {
@@ -88,7 +66,7 @@ fn part_two(input: &str) -> u32 {
         }
     }
 
-    for (_, card_count) in card_count_hash.iter() {
+    for card_count in card_count_hash.values() {
         cards += card_count;
     }
     cards.try_into().unwrap()
