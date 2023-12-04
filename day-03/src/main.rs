@@ -117,7 +117,6 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
                         .entry(location)
                         .or_default()
                         .push(cur_num_string.parse().unwrap());
-
                 }
                 // if get_gear_locations(input, cur_x, cur_y, cur_num_string.len()) {
                 //     sum += &cur_num_string.parse().unwrap();
@@ -132,8 +131,6 @@ fn find_gear_ratio_sum(input: &str) -> u32 {
                     .entry(location)
                     .or_default()
                     .push(cur_num_string.parse().unwrap());
-
-                println!("Break");
             }
             cur_num_string = String::new();
         }
