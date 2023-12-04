@@ -1,5 +1,5 @@
 #![warn(clippy::pedantic)]
-use std::{fs, num};
+use std::{collections::HashMap, fs, num};
 
 fn main() {
     let binding = fs::read_to_string("./day-04/inputs/input.txt").unwrap();
@@ -42,6 +42,113 @@ fn part_one(input: &str) -> u32 {
     wins
 }
 fn part_two(input: &str) -> u32 {
+    let mut cards = 0;
+    //let mut growing_input: Vec<&str> = input.lines().collect();
+    let mut card_count_hash: HashMap<usize, usize> = HashMap::new();
+    for i in 1..=input.lines().count() {
+        card_count_hash.entry(i).or_insert(1);
+    }
+
+    for card in input.lines() {
+        let mut cur_card_matches = 0;
+
+        let mut card_number: usize = card
+            .split(':')
+            .next()
+            .unwrap()
+            .split_whitespace()
+            .last()
+            .unwrap()
+            .parse()
+            .unwrap();
+
+        let mut useful_half = card.split(':').last().unwrap().split('|');
+        let winning_numbers: Vec<&str> = useful_half
+            .next()
+            .unwrap()
+            .trim()
+            .split_whitespace()
+            .collect();
+        let my_numbers: Vec<&str> = useful_half
+            .last()
+            .unwrap()
+            .trim()
+            .split_whitespace()
+            .collect();
+
+        let mut matches = 0;
+        for winning_num in winning_numbers {
+            for my_num in my_numbers.clone() {
+                if my_num == winning_num {
+                    matches += 1;
+                    *card_count_hash.entry(card_number + matches).or_insert(1) +=
+                        card_count_hash[&card_number];
+                    let seven = 7;
+                }
+            }
+        }
+
+        // add to hash
+        // card_count_hash
+        //     .entry(card_number)
+        //     .or_insert(cur_card_matches);
+    }
+
+    // let mut cards = growing_input.len();
+    // let mut processed_cards = 0;
+    // while processed_cards < cards {
+    //     let card = growing_input[processed_cards];
+    //     let mut cur_card_wins = 0;
+
+    //     let card_number: usize = card
+    //         .split(':')
+    //         .next()
+    //         .unwrap()
+    //         .split_whitespace()
+    //         .last()
+    //         .unwrap()
+    //         .parse()
+    //         .unwrap();
+
+    //     let mut useful_half = card.split(':').last().unwrap().split('|');
+    //     let winning_numbers: Vec<&str> = useful_half
+    //         .next()
+    //         .unwrap()
+    //         .trim()
+    //         .split_whitespace()
+    //         .collect();
+    //     let my_numbers: Vec<&str> = useful_half
+    //         .last()
+    //         .unwrap()
+    //         .trim()
+    //         .split_whitespace()
+    //         .collect();
+
+    //     for winning_num in winning_numbers {
+    //         for my_num in my_numbers.clone() {
+    //             if my_num == winning_num {
+    //                 cur_card_wins += 1;
+    //             }
+    //         }
+    //     }
+
+    //     for wins in 0..cur_card_wins {
+    //         growing_input.push(growing_input[card_number + wins])
+    //     }
+
+    //     cards = growing_input.len();
+
+    //     //println!("Processed {processed_cards} of {cards}");
+
+    //     processed_cards += 1;
+    // }
+
+    for (_, card_count) in card_count_hash.iter() {
+        cards += card_count;
+    }
+    cards.try_into().unwrap()
+}
+fn part_two_slow(input: &str) -> u32 {
     let mut growing_input: Vec<&str> = input.lines().collect();
 
     let mut cards = growing_input.len();
