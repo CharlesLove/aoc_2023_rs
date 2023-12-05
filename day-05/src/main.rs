@@ -89,6 +89,27 @@ fn get_destination(current_number: u32, next_map: Vec<AlmanacMap>) -> u32 {
     next_number
 }
 
+fn get_location(seed_number: u32, input: &str) -> u32 {
+    let path = [
+        "seed",
+        "soil",
+        "fertilizer",
+        "water",
+        "light",
+        "temperature",
+        "humidity",
+        "location",
+    ];
+
+    let mut cur_number = seed_number;
+
+    for x in 0..path.len() - 1 {
+        let map_name = format!("{0}-to-{1}", path[x], path[x + 1]);
+        cur_number = get_destination(cur_number, get_map(input, &map_name));
+    }
+    cur_number
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -182,6 +203,14 @@ humidity-to-location map:
         assert_eq!(get_destination(14, seed_to_soil.to_vec()), 14);
         assert_eq!(get_destination(55, seed_to_soil.to_vec()), 57);
         assert_eq!(get_destination(13, seed_to_soil.to_vec()), 13);
+    }
+
+    #[test]
+    fn test_location() {
+        assert_eq!(get_location(79, TEST_LINES1), 82);
+        assert_eq!(get_location(14, TEST_LINES1), 43);
+        assert_eq!(get_location(55, TEST_LINES1), 86);
+        assert_eq!(get_location(13, TEST_LINES1), 35);
     }
     #[test]
     fn test_one() {
