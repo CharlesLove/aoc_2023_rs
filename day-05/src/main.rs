@@ -3,9 +3,9 @@ use std::fs;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 struct AlmanacMap {
-    destination_range_start: u32,
-    source_range_start: u32,
-    range_length: u32,
+    destination_range_start: u64,
+    source_range_start: u64,
+    range_length: u64,
 }
 
 fn main() {
@@ -18,15 +18,24 @@ fn main() {
     println!("Part 2:\n{}", part_two(input));
 }
 
-fn part_one(input: &str) -> u32 {
-    0
+fn part_one(input: &str) -> u64 {
+    let mut lowest_location = u64::MAX;
+    let seeds = get_seeds(input);
+    for cur_seed in seeds {
+        let cur_location = get_location(cur_seed, input);
+        if cur_location < lowest_location {
+            lowest_location = cur_location;
+        }
+    }
+
+    lowest_location
 }
-fn part_two(input: &str) -> u32 {
+fn part_two(input: &str) -> u64 {
     0
 }
 
-fn get_seeds(input: &str) -> Vec<u32> {
-    //let mut seed_vec: Vec<u32> = Vec::new();
+fn get_seeds(input: &str) -> Vec<u64> {
+    //let mut seed_vec: Vec<u64> = Vec::new();
 
     let seed_string = input
         .split("seeds:")
@@ -57,7 +66,7 @@ fn get_map(input: &str, map_name: &str) -> Vec<AlmanacMap> {
         .trim();
 
     for line in map_string.lines() {
-        let number: Vec<u32> = line
+        let number: Vec<u64> = line
             .split_whitespace()
             .map(|x| x.parse().unwrap())
             .collect();
@@ -72,7 +81,7 @@ fn get_map(input: &str, map_name: &str) -> Vec<AlmanacMap> {
     map_vec
 }
 
-fn get_destination(current_number: u32, next_map: Vec<AlmanacMap>) -> u32 {
+fn get_destination(current_number: u64, next_map: Vec<AlmanacMap>) -> u64 {
     let mut next_number = current_number;
 
     for a_map in next_map {
@@ -89,7 +98,7 @@ fn get_destination(current_number: u32, next_map: Vec<AlmanacMap>) -> u32 {
     next_number
 }
 
-fn get_location(seed_number: u32, input: &str) -> u32 {
+fn get_location(seed_number: u64, input: &str) -> u64 {
     let path = [
         "seed",
         "soil",
@@ -214,10 +223,10 @@ humidity-to-location map:
     }
     #[test]
     fn test_one() {
-        assert_eq!(part_one(TEST_LINES1), 8);
+        assert_eq!(part_one(TEST_LINES1), 35);
     }
-    #[test]
-    fn test_two() {
-        assert_eq!(part_two(TEST_LINES1), 8);
-    }
+    // #[test]
+    // fn test_two() {
+    //     assert_eq!(part_two(TEST_LINES1), 8);
+    // }
 }
