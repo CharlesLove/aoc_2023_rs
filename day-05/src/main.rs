@@ -1,7 +1,7 @@
 #![warn(clippy::pedantic)]
 use std::fs;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 struct AlmanacMap {
     destination_range_start: u32,
     source_range_start: u32,
@@ -72,6 +72,23 @@ fn get_map(input: &str, map_name: &str) -> Vec<AlmanacMap> {
     map_vec
 }
 
+fn get_destination(current_number: u32, next_map: Vec<AlmanacMap>) -> u32 {
+    let mut next_number = current_number;
+
+    for a_map in next_map {
+        let min = a_map.source_range_start;
+        let max = min + a_map.range_length - 1;
+
+        if current_number >= min && current_number <= max {
+            let diff = current_number - min;
+            next_number = a_map.destination_range_start + diff;
+            break;
+        }
+    }
+
+    next_number
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -110,10 +127,6 @@ humidity-to-location map:
 56 93 4";
 
     #[test]
-    fn test_one() {
-        assert_eq!(part_one(TEST_LINES1), 8);
-    }
-    #[test]
     fn test_seeds() {
         assert_eq!(get_seeds(TEST_LINES1), [79, 14, 55, 13]);
     }
@@ -149,6 +162,30 @@ humidity-to-location map:
                 },
             ]
         );
+    }
+    #[test]
+    fn test_destination() {
+        let seed_to_soil = [
+            AlmanacMap {
+                destination_range_start: 50,
+                source_range_start: 98,
+                range_length: 2,
+            },
+            AlmanacMap {
+                destination_range_start: 52,
+                source_range_start: 50,
+                range_length: 48,
+            },
+        ];
+
+        assert_eq!(get_destination(79, seed_to_soil.to_vec()), 81);
+        assert_eq!(get_destination(14, seed_to_soil.to_vec()), 14);
+        assert_eq!(get_destination(55, seed_to_soil.to_vec()), 57);
+        assert_eq!(get_destination(13, seed_to_soil.to_vec()), 13);
+    }
+    #[test]
+    fn test_one() {
+        assert_eq!(part_one(TEST_LINES1), 8);
     }
     #[test]
     fn test_two() {
