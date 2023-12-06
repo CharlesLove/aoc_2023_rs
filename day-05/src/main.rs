@@ -20,6 +20,8 @@ fn main() {
     println!("Part 1:\n{}", part_one(input));
 
     // too high 1605608030
+    // too high 404881758
+    // incorrect 298690884
     println!("Part 2:\n{}", part_two(input));
 }
 
@@ -46,15 +48,14 @@ fn part_two(input: &str) -> u64 {
 
     let total_range: f64 = (better_seed_range.max - better_seed_range.min) as f64;
     let mut iterations: f64 = 0.;
+
     for cur_seed in (better_seed_range.min..better_seed_range.max).into_iter() {
         let cur_location = get_location(cur_seed, input);
 
         if cur_location < lowest_location {
-            lowest_location = cur_location
-        }
-
-        if iterations % 10000. == 0. {
+            lowest_location = cur_location;
             println!("{0}%", iterations / total_range * 100.);
+            println!("{lowest_location}");
         }
         iterations += 1.;
     }
