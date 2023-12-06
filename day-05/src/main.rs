@@ -7,14 +7,19 @@ struct AlmanacMap {
     source_range_start: u64,
     range_length: u64,
 }
+#[derive(PartialEq, Debug, Clone, Copy)]
+struct SeedRange {
+    min: u64,
+    max: u64,
+}
 
 fn main() {
     let binding = fs::read_to_string("./day-05/inputs/input.txt").unwrap();
     let input = binding.trim();
 
-    println!("{}", input);
-
     println!("Part 1:\n{}", part_one(input));
+
+    // too high 1605608030
     println!("Part 2:\n{}", part_two(input));
 }
 
@@ -31,7 +36,30 @@ fn part_one(input: &str) -> u64 {
     lowest_location
 }
 fn part_two(input: &str) -> u64 {
-    0
+    let mut lowest_location = u64::MAX;
+    let seed_ranges = get_seed_range(input);
+    let mut better_seed_range: SeedRange = seed_ranges[0];
+
+    for seed_range in seed_ranges {
+        better_seed_range = get_better_seed_range(better_seed_range, seed_range);
+    }
+
+    let total_range: f64 = (better_seed_range.max - better_seed_range.min) as f64;
+    let mut iterations: f64 = 0.;
+    for cur_seed in (better_seed_range.min..better_seed_range.max).into_iter() {
+        let cur_location = get_location(cur_seed, input);
+
+        if cur_location < lowest_location {
+            lowest_location = cur_location
+        }
+
+        if iterations % 10000. == 0. {
+            println!("{0}%", iterations / total_range * 100.);
+        }
+        iterations += 1.;
+    }
+
+    lowest_location
 }
 
 fn get_seeds(input: &str) -> Vec<u64> {
@@ -97,6 +125,22 @@ fn get_destination(current_number: u64, next_map: Vec<AlmanacMap>) -> u64 {
 
     next_number
 }
+fn get_destination_from_range(current_range: SeedRange, next_map: Vec<AlmanacMap>) -> u64 {
+    let mut next_number = current_range.min;
+
+    for a_map in next_map {
+        let min = a_map.source_range_start;
+        let max = min + a_map.range_length - 1;
+
+        if current_range.min >= min && current_range.max <= max {
+            let diff = current_range.min - min;
+            next_number = a_map.destination_range_start + diff;
+            break;
+        }
+    }
+
+    next_number
+}
 
 fn get_location(seed_number: u64, input: &str) -> u64 {
     let path = [
@@ -117,6 +161,64 @@ fn get_location(seed_number: u64, input: &str) -> u64 {
         cur_number = get_destination(cur_number, get_map(input, &map_name));
     }
     cur_number
+}
+fn get_location_from_range(seed_range: SeedRange, input: &str) -> u64 {
+    let path = [
+        "soil",
+        "fertilizer",
+        "water",
+        "light",
+        "temperature",
+        "humidity",
+        "location",
+    ];
+
+    let mut cur_number = get_destination_from_range(seed_range, get_map(input, "seed-to-soil"));
+
+    for x in 0..path.len() - 1 {
+        let map_name = format!("{0}-to-{1}", path[x], path[x + 1]);
+        cur_number = get_destination(cur_number, get_map(input, &map_name));
+    }
+
+    cur_number
+}
+
+fn get_seed_range(input: &str) -> Vec<SeedRange> {
+    let mut seed_range_vec: Vec<SeedRange> = Vec::new();
+
+    let seed_string = input
+        .split("seeds:")
+        .nth(1)
+        .unwrap()
+        .split("\n\n")
+        .next()
+        .unwrap()
+        .trim();
+    let num_vec: Vec<u64> = seed_string
+        .split_whitespace()
+        .map(|x| x.parse().unwrap())
+        .collect();
+
+    for n in (0..num_vec.len()).step_by(2) {
+        let cur_seed_range: SeedRange = SeedRange {
+            min: num_vec[n],
+            max: num_vec[n] + num_vec[n + 1] - 1,
+        };
+        seed_range_vec.push(cur_seed_range);
+    }
+
+    seed_range_vec
+}
+
+fn get_better_seed_range(old_seed_range: SeedRange, new_seed_range: SeedRange) -> SeedRange {
+    let mut new_seed_range = old_seed_range;
+    if new_seed_range.min < old_seed_range.min {
+        new_seed_range.min = new_seed_range.min;
+    }
+    if new_seed_range.max > old_seed_range.max {
+        new_seed_range.max = new_seed_range.max;
+    }
+    new_seed_range
 }
 
 #[cfg(test)]
@@ -221,12 +323,23 @@ humidity-to-location map:
         assert_eq!(get_location(55, TEST_LINES1), 86);
         assert_eq!(get_location(13, TEST_LINES1), 35);
     }
+
+    #[test]
+    fn test_seed_range() {
+        assert_eq!(
+            get_seed_range(TEST_LINES1),
+            [
+                SeedRange { min: 79, max: 92 },
+                SeedRange { min: 55, max: 67 }
+            ]
+        );
+    }
     #[test]
     fn test_one() {
         assert_eq!(part_one(TEST_LINES1), 35);
     }
-    // #[test]
-    // fn test_two() {
-    //     assert_eq!(part_two(TEST_LINES1), 8);
-    // }
+    #[test]
+    fn test_two() {
+        assert_eq!(part_two(TEST_LINES1), 46);
+    }
 }
