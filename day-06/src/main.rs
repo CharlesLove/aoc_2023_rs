@@ -9,8 +9,8 @@ fn main() {
     println!("Part 2:\n{}", part_two(input));
 }
 
-fn part_one(input: &str) -> u32 {
-    let times: Vec<u32> = input
+fn part_one(input: &str) -> u64 {
+    let times: Vec<u64> = input
         .lines()
         .nth(0)
         .unwrap()
@@ -20,7 +20,7 @@ fn part_one(input: &str) -> u32 {
         .split_whitespace()
         .map(|x| x.parse().unwrap())
         .collect();
-    let distances: Vec<u32> = input
+    let distances: Vec<u64> = input
         .lines()
         .nth(1)
         .unwrap()
@@ -30,7 +30,7 @@ fn part_one(input: &str) -> u32 {
         .split_whitespace()
         .map(|x| x.parse().unwrap())
         .collect();
-    let possibilities: Vec<u32> = times
+    let possibilities: Vec<u64> = times
         .iter()
         .zip(distances.iter())
         .map(|(x, y)| get_possibilities(*x, *y))
@@ -38,12 +38,34 @@ fn part_one(input: &str) -> u32 {
 
     possibilities.iter().product()
 }
-fn part_two(input: &str) -> u32 {
-    0
+fn part_two(input: &str) -> u64 {
+    let total_time: u64 = input
+        .lines()
+        .nth(0)
+        .unwrap()
+        .split("Time:")
+        .nth(1)
+        .unwrap()
+        .replace(' ', "")
+        .parse()
+        .unwrap();
+    let distance: u64 = input
+        .lines()
+        .nth(1)
+        .unwrap()
+        .split("Distance:")
+        .nth(1)
+        .unwrap()
+        .replace(' ', "")
+        .parse()
+        .unwrap();
+    let possibility: u64 = get_possibilities(total_time, distance);
+
+    possibility
 }
 
-fn get_possibilities(total_time: u32, distance: u32) -> u32 {
-    let mut possibilities: u32 = 0;
+fn get_possibilities(total_time: u64, distance: u64) -> u64 {
+    let mut possibilities: u64 = 0;
     for held_time in 0..total_time {
         if distance < held_time * (total_time - held_time) {
             possibilities += 1;
@@ -62,8 +84,8 @@ Distance:  9  40  200";
     fn test_one() {
         assert_eq!(part_one(TEST_LINES1), 288);
     }
-    // #[test]
-    // fn test_two() {
-    //     assert_eq!(part_two(TEST_LINES1), 8);
-    // }
+    #[test]
+    fn test_two() {
+        assert_eq!(part_two(TEST_LINES1), 71503);
+    }
 }
