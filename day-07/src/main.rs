@@ -1,10 +1,10 @@
 #![warn(clippy::pedantic)]
 use std::{collections::HashMap, fs};
 
-struct card_hand {
+struct CardHand {
     score: u32,
     bid: u32,
-    cards: str,
+    cards: String,
 }
 
 fn main() {
@@ -41,6 +41,71 @@ fn get_card_value(card_char: char) -> u32 {
     card_value_map[&card_char]
 }
 
+fn get_card_hand(input_cards: &str, input_bid: u32) -> CardHand {
+    let mut card_counts_map: HashMap<char, u32> = HashMap::new();
+
+    let mut base_score = 0;
+    let mut bonus_multiplier = 1;
+
+    for cur_char in input_cards.chars() {
+        *card_counts_map.entry(cur_char.to_owned()).or_default() += 1;
+        base_score += get_card_value(cur_char);
+    }
+
+    let mut biggest_dup: (char, u32) = (' ', 0);
+    let mut second_biggest_dup: (char, u32) = (' ', 0);
+
+    for (key, value) in card_counts_map {
+        if value > biggest_dup.1 {
+            second_biggest_dup = biggest_dup;
+            biggest_dup.0 = key;
+            biggest_dup.1 = value
+        } else if value > second_biggest_dup.1 {
+            second_biggest_dup.0 = key;
+            second_biggest_dup.1 = value
+        }
+    }
+
+    // high
+    if biggest_dup.1 == 1 {
+        // do nothing, we've already found score
+    }
+    // pair
+    else if biggest_dup.1 == 2 && second_biggest_dup.1 < 2 {
+        bonus_multiplier = 10;
+    }
+    // 2-pair
+    else if biggest_dup.1 == 2 && second_biggest_dup.1 == 2 {
+        bonus_multiplier = 100;
+    }
+    // 3-kind
+    else if biggest_dup.1 == 3 && second_biggest_dup.1 < 2 {
+        bonus_multiplier = 1_000;
+    }
+    // full-house
+    else if biggest_dup.1 == 3 && second_biggest_dup.1 == 2 {
+        bonus_multiplier = 10_000;
+    }
+    // 4-kind
+    else if biggest_dup.1 == 4 {
+        bonus_multiplier = 100_000;
+    }
+    // 5-kind
+    else if biggest_dup.1 == 5 {
+        bonus_multiplier = 1_000_000;
+    } else {
+        panic!("Something went wrong when calculating this hand!");
+    }
+
+    let new_card_hand = CardHand {
+        score: base_score * bonus_multiplier,
+        bid: input_bid,
+        cards: input_cards.to_string(),
+    };
+
+    new_card_hand
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -63,5 +128,22 @@ QQQJA 483";
     fn test_single_card() {
         assert_eq!(get_card_value('2'), 2);
         assert_eq!(get_card_value('A'), 14);
+    }
+    #[test]
+    fn test_single_hand() {
+        // high
+        assert_eq!(get_card_hand("65432", 1).score, 20);
+        // pair
+        assert_eq!(get_card_hand("32T3K", 1).score, 310);
+        // 2-pair
+        assert_eq!(get_card_hand("KTJJT", 1).score, 5_500);
+        // 3-kind
+        assert_eq!(get_card_hand("T55J5", 1).score, 36_000);
+        // full-house
+        assert_eq!(get_card_hand("T55T5", 1).score, 350_000);
+        // 4-kind
+        assert_eq!(get_card_hand("T5555", 1).score, 3_000_000);
+        // 5-kind
+        assert_eq!(get_card_hand("55555", 1).score, 25_000_000);
     }
 }
