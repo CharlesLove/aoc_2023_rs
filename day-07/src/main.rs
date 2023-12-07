@@ -21,11 +21,18 @@ fn part_one(input: &str) -> u32 {
     let mut total_winnings = 0;
 
     for line in input.lines() {
-        let mut split_line = line.trim().split_whitespace();
+        let cur_cards = line.split_whitespace().nth(0).unwrap().trim();
+        let cur_bid: u32 = line
+            .split_whitespace()
+            .nth(1)
+            .unwrap()
+            .trim()
+            .parse()
+            .unwrap();
 
-        let cur_cards = split_line.next().unwrap().trim();
-        let cur_bid: u32 = split_line.next().unwrap().trim().parse().unwrap();
-
+        if cur_cards == "" {
+            panic!("WTF");
+        }
         let cur_hand = get_card_hand(cur_cards, cur_bid);
 
         card_hand_vec.push(cur_hand);
@@ -66,73 +73,64 @@ fn get_card_value(card_char: char) -> u32 {
 fn get_card_hand(input_cards: &str, input_bid: u32) -> CardHand {
     let mut card_counts_map: HashMap<char, u32> = HashMap::new();
 
-    let mut base_score = 0;
-    let mut bonus_multiplier = 1;
+    let mut base_value = 0;
+    let mut bonus_value = 0;
 
-    for cur_char in input_cards.chars() {
+    // convert values using psuedo-hex
+    let mut i = 0;
+    for cur_char in input_cards.chars().rev() {
         *card_counts_map.entry(cur_char.to_owned()).or_default() += 1;
-        base_score += get_card_value(cur_char);
+        base_value += 16u32.pow(i) * get_card_value(cur_char);
+        i += 1;
     }
 
-    let mut biggest_dup: (char, u32) = (' ', 0);
-    let mut second_biggest_dup: (char, u32) = (' ', 0);
+    let mut first_dup: (char, u32) = (' ', 0);
+    let mut second_dup: (char, u32) = (' ', 0);
 
     for (key, value) in card_counts_map {
-        if value > biggest_dup.1 {
-            second_biggest_dup = biggest_dup;
-            biggest_dup.0 = key;
-            biggest_dup.1 = value
-        } else if value > second_biggest_dup.1 {
-            second_biggest_dup.0 = key;
-            second_biggest_dup.1 = value
+        if value > first_dup.1 {
+            second_dup = first_dup;
+            first_dup.0 = key;
+            first_dup.1 = value
+        } else if value > second_dup.1 {
+            second_dup.0 = key;
+            second_dup.1 = value
         }
     }
 
     // high
-    if biggest_dup.1 == 1 {
+    if first_dup.1 == 1 {
         // do nothing, we've already found score
     }
     // pair
-    else if biggest_dup.1 == 2 && second_biggest_dup.1 < 2 {
-        bonus_multiplier = 10;
+    else if first_dup.1 == 2 && second_dup.1 < 2 {
+        bonus_value = 1;
     }
     // 2-pair
-    else if biggest_dup.1 == 2 && second_biggest_dup.1 == 2 {
-        // find which dup is worth more
-        if get_card_value(second_biggest_dup.0) > get_card_value(biggest_dup.0) {
-            let swap_biggest_dup = biggest_dup;
-            biggest_dup = second_biggest_dup;
-            second_biggest_dup = swap_biggest_dup;
-        }
-
-        // don't bother with bonus, just do score
-        base_score -= get_card_value(biggest_dup.0) * 2 + get_card_value(second_biggest_dup.0) * 2;
-
-        base_score = (get_card_value(biggest_dup.0) * 200)
-            + get_card_value(second_biggest_dup.0) * 20
-            + base_score;
+    else if first_dup.1 == 2 && second_dup.1 == 2 {
+        bonus_value = 2;
     }
     // 3-kind
-    else if biggest_dup.1 == 3 && second_biggest_dup.1 < 2 {
-        bonus_multiplier = 1_000;
+    else if first_dup.1 == 3 && second_dup.1 < 2 {
+        bonus_value = 3;
     }
     // full-house
-    else if biggest_dup.1 == 3 && second_biggest_dup.1 == 2 {
-        bonus_multiplier = 10_000;
+    else if first_dup.1 == 3 && second_dup.1 == 2 {
+        bonus_value = 4;
     }
     // 4-kind
-    else if biggest_dup.1 == 4 {
-        bonus_multiplier = 100_000;
+    else if first_dup.1 == 4 {
+        bonus_value = 5;
     }
     // 5-kind
-    else if biggest_dup.1 == 5 {
-        bonus_multiplier = 1_000_000;
+    else if first_dup.1 == 5 {
+        bonus_value = 6;
     } else {
         panic!("Something went wrong when calculating this hand!");
     }
 
     let new_card_hand = CardHand {
-        score: base_score * bonus_multiplier,
+        score: base_value + 16u32.pow(i) * bonus_value,
         bid: input_bid,
         cards: input_cards.to_string(),
     };
@@ -147,7 +145,8 @@ mod tests {
 T55J5 684
 KK677 28
 KTJJT 220
-QQQJA 483";
+QQQJA 483
+";
 
     #[test]
     fn test_one() {
