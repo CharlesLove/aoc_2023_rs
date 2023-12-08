@@ -8,10 +8,11 @@ fn main() {
     println!("Part 1:\n{}", part_one(input));
 
     // too low 3102798021
+    // too high 18026951026953744581
     println!("Part 2:\n{}", part_two(input));
 }
 
-fn part_one(input: &str) -> u32 {
+fn part_one(input: &str) -> u64 {
     let mut steps = 0;
     let mut current_location = "AAA";
     let final_destination = "ZZZ";
@@ -64,7 +65,7 @@ fn part_one(input: &str) -> u32 {
 
     steps
 }
-fn part_two(input: &str) -> u32 {
+fn part_two(input: &str) -> u64 {
     let mut steps = 0;
     //let mut current_location = "AAA";
     let mut current_locations: Vec<String> = Vec::new();
@@ -101,8 +102,8 @@ fn part_two(input: &str) -> u32 {
     }
 
     let starting_locations = current_locations.clone();
-    let mut loop_lengths: Vec<u32> = vec![0; current_locations.len()];
-    let mut destination_steps: Vec<u32> = vec![0; current_locations.len()];
+    let mut loop_lengths: Vec<u64> = vec![0; current_locations.len()];
+    let mut destination_steps: Vec<u64> = vec![0; current_locations.len()];
     let mut i = 0;
     let mut filled_out = false;
     while !filled_out {
