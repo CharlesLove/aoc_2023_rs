@@ -4,7 +4,7 @@ use std::{collections::HashMap, fs};
 struct CardHand {
     score: u32,
     bid: u32,
-    cards: String,
+    _cards: String,
 }
 
 fn main() {
@@ -173,7 +173,7 @@ fn get_card_hand(input_cards: &str, input_bid: u32) -> CardHand {
     let new_card_hand = CardHand {
         score: base_value + 16u32.pow(i) * bonus_value,
         bid: input_bid,
-        cards: input_cards.to_string(),
+        _cards: input_cards.to_string(),
     };
 
     new_card_hand
@@ -284,7 +284,7 @@ fn get_card_hand_revised(input_cards: &str, input_bid: u32) -> CardHand {
     let new_card_hand = CardHand {
         score: base_value + 16u32.pow(i) * bonus_value,
         bid: input_bid,
-        cards: input_cards.to_string(),
+        _cards: input_cards.to_string(),
     };
 
     new_card_hand
