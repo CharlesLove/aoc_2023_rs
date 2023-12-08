@@ -41,11 +41,11 @@ fn part_one(input: &str) -> u64 {
 }
 fn _part_two(input: &str) -> u64 {
     let mut lowest_location = u64::MAX;
-    let seed_ranges = get_seed_range(input);
+    let seed_ranges = _get_seed_range(input);
     let mut better_seed_range: SeedRange = seed_ranges[0];
 
     for seed_range in seed_ranges {
-        better_seed_range = get_better_seed_range(better_seed_range, seed_range);
+        better_seed_range = _get_better_seed_range(better_seed_range, seed_range);
     }
 
     let total_range: u64 = better_seed_range.max - better_seed_range.min;
@@ -186,7 +186,7 @@ fn _get_location_from_range(seed_range: SeedRange, input: &str) -> u64 {
     cur_number
 }
 
-fn get_seed_range(input: &str) -> Vec<SeedRange> {
+fn _get_seed_range(input: &str) -> Vec<SeedRange> {
     let mut seed_range_vec: Vec<SeedRange> = Vec::new();
 
     let seed_string = input
@@ -213,7 +213,7 @@ fn get_seed_range(input: &str) -> Vec<SeedRange> {
     seed_range_vec
 }
 
-fn get_better_seed_range(old_seed_range: SeedRange, new_seed_range: SeedRange) -> SeedRange {
+fn _get_better_seed_range(old_seed_range: SeedRange, new_seed_range: SeedRange) -> SeedRange {
     let mut newer_seed_range = old_seed_range;
     if new_seed_range.min < old_seed_range.min {
         newer_seed_range.min = new_seed_range.min;
@@ -330,7 +330,7 @@ humidity-to-location map:
     #[test]
     fn test_seed_range() {
         assert_eq!(
-            get_seed_range(TEST_LINES1),
+            _get_seed_range(TEST_LINES1),
             [
                 SeedRange { min: 79, max: 92 },
                 SeedRange { min: 55, max: 67 }
