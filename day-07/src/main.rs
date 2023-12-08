@@ -22,7 +22,7 @@ fn part_one(input: &str) -> u32 {
     let mut total_winnings = 0;
 
     for line in input.lines() {
-        let cur_cards = line.split_whitespace().nth(0).unwrap().trim();
+        let cur_cards = line.split_whitespace().next().unwrap().trim();
         let cur_bid: u32 = line
             .split_whitespace()
             .nth(1)
@@ -50,7 +50,7 @@ fn part_two(input: &str) -> u32 {
     let mut total_winnings = 0;
 
     for line in input.lines() {
-        let cur_cards = line.split_whitespace().nth(0).unwrap().trim();
+        let cur_cards = line.split_whitespace().next().unwrap().trim();
         let cur_bid: u32 = line
             .split_whitespace()
             .nth(1)
@@ -132,10 +132,10 @@ fn get_card_hand(input_cards: &str, input_bid: u32) -> CardHand {
         if value > first_dup.1 {
             second_dup = first_dup;
             first_dup.0 = key;
-            first_dup.1 = value
+            first_dup.1 = value;
         } else if value > second_dup.1 {
             second_dup.0 = key;
-            second_dup.1 = value
+            second_dup.1 = value;
         }
     }
 
@@ -170,13 +170,13 @@ fn get_card_hand(input_cards: &str, input_bid: u32) -> CardHand {
         panic!("Something went wrong when calculating this hand!");
     }
 
-    let new_card_hand = CardHand {
+    
+
+    CardHand {
         score: base_value + 16u32.pow(i) * bonus_value,
         bid: input_bid,
         _cards: input_cards.to_string(),
-    };
-
-    new_card_hand
+    }
 }
 fn get_card_hand_revised(input_cards: &str, input_bid: u32) -> CardHand {
     let mut card_counts_map: HashMap<char, u32> = HashMap::new();
@@ -203,10 +203,10 @@ fn get_card_hand_revised(input_cards: &str, input_bid: u32) -> CardHand {
         if value > first_dup.1 {
             second_dup = first_dup;
             first_dup.0 = key;
-            first_dup.1 = value
+            first_dup.1 = value;
         } else if value > second_dup.1 {
             second_dup.0 = key;
-            second_dup.1 = value
+            second_dup.1 = value;
         }
     }
 
@@ -221,7 +221,7 @@ fn get_card_hand_revised(input_cards: &str, input_bid: u32) -> CardHand {
     else if first_dup.1 == 2 && second_dup.1 < 2 {
         if joker_count == 1 || joker_count == 2 {
             // 3-kind
-            bonus_value = 3
+            bonus_value = 3;
         } else {
             bonus_value = 1;
         }
@@ -281,13 +281,13 @@ fn get_card_hand_revised(input_cards: &str, input_bid: u32) -> CardHand {
     //     bonus_value = 6;
     // }
 
-    let new_card_hand = CardHand {
+    
+
+    CardHand {
         score: base_value + 16u32.pow(i) * bonus_value,
         bid: input_bid,
         _cards: input_cards.to_string(),
-    };
-
-    new_card_hand
+    }
 }
 
 #[cfg(test)]
