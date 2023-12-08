@@ -120,17 +120,17 @@ fn find_match(checked_string: &str) -> u32 {
 mod tests {
     use super::*;
 
-    const TEST_LINES1: &str = r#"1abc2
+    const TEST_LINES1: &str = r"1abc2
 pqr3stu8vwx
 a1b2c3d4e5f
-treb7uchet"#;
-    const TEST_LINES2: &str = r#"two1nine
+treb7uchet";
+    const TEST_LINES2: &str = r"two1nine
 eightwothree
 abcone2threexyz
 xtwone3four
 4nineeightseven2
 zoneight234
-7pqrstsixteen"#;
+7pqrstsixteen";
 
     #[test]
     fn test_add() {

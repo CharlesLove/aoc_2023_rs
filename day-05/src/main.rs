@@ -49,7 +49,7 @@ fn part_two(input: &str) -> u64 {
     let total_range: f64 = (better_seed_range.max - better_seed_range.min) as f64;
     let mut iterations: f64 = 0.;
 
-    for cur_seed in (better_seed_range.min..better_seed_range.max).into_iter() {
+    for cur_seed in better_seed_range.min..better_seed_range.max {
         let cur_location = get_location(cur_seed, input);
 
         if cur_location < lowest_location {
@@ -211,7 +211,7 @@ fn get_seed_range(input: &str) -> Vec<SeedRange> {
     seed_range_vec
 }
 
-fn get_better_seed_range(old_seed_range: SeedRange, new_seed_range: SeedRange) -> SeedRange {
+fn get_better_seed_range(old_seed_range: SeedRange, _new_seed_range: SeedRange) -> SeedRange {
     let mut new_seed_range = old_seed_range;
     if new_seed_range.min < old_seed_range.min {
         new_seed_range.min = new_seed_range.min;
