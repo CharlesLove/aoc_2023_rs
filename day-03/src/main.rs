@@ -224,7 +224,7 @@ fn get_gear_locations(input: &str, cur_x: i32, cur_y: i32, length: i32) -> Vec<C
 #[cfg(test)]
 mod tests {
     use super::*;
-    const TEST_LINES1: &str = r"467..114..
+    const _TEST_LINES1: &str = r"467..114..
 ...*......
 ..35..633.
 ......#...

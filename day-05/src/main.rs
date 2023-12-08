@@ -46,7 +46,7 @@ fn part_two(input: &str) -> u64 {
         better_seed_range = get_better_seed_range(better_seed_range, seed_range);
     }
 
-    let total_range: f64 = (better_seed_range.max - better_seed_range.min) as f64;
+    let total_range: u64 = better_seed_range.max - better_seed_range.min;
     let mut iterations: f64 = 0.;
 
     for cur_seed in better_seed_range.min..better_seed_range.max {
@@ -54,7 +54,7 @@ fn part_two(input: &str) -> u64 {
 
         if cur_location < lowest_location {
             lowest_location = cur_location;
-            println!("{0}%", iterations / total_range * 100.);
+            println!("{0}%", (iterations as f64 / total_range as f64) * 100.);
             println!("{lowest_location}");
         }
         iterations += 1.;
@@ -126,7 +126,7 @@ fn get_destination(current_number: u64, next_map: Vec<AlmanacMap>) -> u64 {
 
     next_number
 }
-fn get_destination_from_range(current_range: SeedRange, next_map: Vec<AlmanacMap>) -> u64 {
+fn _get_destination_from_range(current_range: SeedRange, next_map: Vec<AlmanacMap>) -> u64 {
     let mut next_number = current_range.min;
 
     for a_map in next_map {
@@ -163,7 +163,7 @@ fn get_location(seed_number: u64, input: &str) -> u64 {
     }
     cur_number
 }
-fn get_location_from_range(seed_range: SeedRange, input: &str) -> u64 {
+fn _get_location_from_range(seed_range: SeedRange, input: &str) -> u64 {
     let path = [
         "soil",
         "fertilizer",
@@ -174,7 +174,7 @@ fn get_location_from_range(seed_range: SeedRange, input: &str) -> u64 {
         "location",
     ];
 
-    let mut cur_number = get_destination_from_range(seed_range, get_map(input, "seed-to-soil"));
+    let mut cur_number = _get_destination_from_range(seed_range, get_map(input, "seed-to-soil"));
 
     for x in 0..path.len() - 1 {
         let map_name = format!("{0}-to-{1}", path[x], path[x + 1]);
