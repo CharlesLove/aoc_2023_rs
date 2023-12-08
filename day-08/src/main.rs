@@ -6,6 +6,8 @@ fn main() {
     let input = binding.trim();
 
     println!("Part 1:\n{}", part_one(input));
+
+    // too low 3102798021
     println!("Part 2:\n{}", part_two(input));
 }
 
@@ -98,10 +100,13 @@ fn part_two(input: &str) -> u32 {
         location_map.insert(location_half, destination_map);
     }
 
+    let starting_locations = current_locations.clone();
+    let mut loop_lengths: Vec<u32> = vec![0; current_locations.len()];
+    let mut destination_steps: Vec<u32> = vec![0; current_locations.len()];
     let mut i = 0;
-    let mut finds = 0;
-    while finds != current_locations.len() {
-        finds = 0;
+    let mut filled_out = false;
+    while !filled_out {
+        //filled_out = 0;
         steps += 1;
 
         for l in 0..current_locations.len() {
@@ -110,19 +115,34 @@ fn part_two(input: &str) -> u32 {
             let next_location = &location_map[&current_locations[l]][&current_instruction];
 
             current_locations[l] = next_location.to_string();
-            if current_locations[l].ends_with('Z') {
-                finds += 1;
-            } else {
-                break;
+            if current_locations[l].ends_with('Z') && destination_steps[l] == 0 {
+                destination_steps[l] = steps;
+                //filled_out += 1;
             }
+            // if current_locations[l] == starting_locations[l] && loop_lengths[l] == 0 {
+            //     loop_lengths[l] = steps;
+            // }
+
+            //println!("#{l}; destination steps:{0}", destination_steps[l]);
         }
+
+        if !destination_steps.contains(&0) {
+            filled_out = true;
+        }
+        //println!("{0} {steps} {finds}", current_locations.len());
         i += 1;
         if i >= instructions.len() {
             i = 0;
         }
     }
 
-    steps
+    let mut product = 1;
+    for steps in destination_steps {
+        //println!("{steps}");
+        product *= steps;
+        //println!("{product}");
+    }
+    product
 }
 
 #[cfg(test)]
@@ -142,6 +162,16 @@ ZZZ = (ZZZ, ZZZ)";
 AAA = (BBB, BBB)
 BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)";
+    const TEST_LINES3: &str = r"LR
+
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)";
 
     #[test]
     fn test_one() {
@@ -150,6 +180,6 @@ ZZZ = (ZZZ, ZZZ)";
     }
     #[test]
     fn test_two() {
-        assert_eq!(part_two(TEST_LINES2), 6);
+        assert_eq!(part_two(TEST_LINES3), 6);
     }
 }
