@@ -1,4 +1,5 @@
 #![warn(clippy::pedantic)]
+use lcmx::lcmx;
 use std::{collections::HashMap, fs};
 
 fn main() {
@@ -67,10 +68,8 @@ fn part_one(input: &str) -> u64 {
 }
 fn part_two(input: &str) -> u64 {
     let mut steps = 0;
-    //let mut current_location = "AAA";
     let mut current_locations: Vec<String> = Vec::new();
-    let final_destination = "ZZZ";
-    let mut found = false;
+
     let instructions: Vec<char> = input.lines().next().unwrap().chars().collect();
 
     let mut location_map: HashMap<String, HashMap<char, String>> = HashMap::new();
@@ -101,13 +100,10 @@ fn part_two(input: &str) -> u64 {
         location_map.insert(location_half, destination_map);
     }
 
-    let starting_locations = current_locations.clone();
-    let mut loop_lengths: Vec<u64> = vec![0; current_locations.len()];
     let mut destination_steps: Vec<u64> = vec![0; current_locations.len()];
     let mut i = 0;
     let mut filled_out = false;
     while !filled_out {
-        //filled_out = 0;
         steps += 1;
 
         for l in 0..current_locations.len() {
@@ -118,32 +114,20 @@ fn part_two(input: &str) -> u64 {
             current_locations[l] = next_location.to_string();
             if current_locations[l].ends_with('Z') && destination_steps[l] == 0 {
                 destination_steps[l] = steps;
-                //filled_out += 1;
             }
-            // if current_locations[l] == starting_locations[l] && loop_lengths[l] == 0 {
-            //     loop_lengths[l] = steps;
-            // }
-
-            //println!("#{l}; destination steps:{0}", destination_steps[l]);
         }
 
         if !destination_steps.contains(&0) {
             filled_out = true;
         }
-        //println!("{0} {steps} {finds}", current_locations.len());
+
         i += 1;
         if i >= instructions.len() {
             i = 0;
         }
     }
 
-    let mut product = 1;
-    for steps in destination_steps {
-        //println!("{steps}");
-        product *= steps;
-        //println!("{product}");
-    }
-    product
+    lcmx(&destination_steps).unwrap()
 }
 
 #[cfg(test)]
