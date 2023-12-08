@@ -11,7 +11,8 @@ fn main() {
 
 fn part_one(input: &str) -> u64 {
     let times: Vec<u64> = input
-        .lines().next()
+        .lines()
+        .next()
         .unwrap()
         .split("Time:")
         .nth(1)
@@ -39,7 +40,8 @@ fn part_one(input: &str) -> u64 {
 }
 fn part_two(input: &str) -> u64 {
     let total_time: u64 = input
-        .lines().next()
+        .lines()
+        .next()
         .unwrap()
         .split("Time:")
         .nth(1)
