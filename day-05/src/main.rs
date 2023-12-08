@@ -48,7 +48,7 @@ fn _part_two(input: &str) -> u64 {
         better_seed_range = _get_better_seed_range(better_seed_range, seed_range);
     }
 
-    let _total_range: u64 = better_seed_range.max - better_seed_range.min;
+    //let _total_range: u64 = better_seed_range.max - better_seed_range.min;
     //let mut _iterations: f64 = 0.;
 
     for cur_seed in better_seed_range.min..better_seed_range.max {
