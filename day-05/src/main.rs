@@ -54,7 +54,7 @@ fn part_two(input: &str) -> u64 {
 
         if cur_location < lowest_location {
             lowest_location = cur_location;
-            println!("{0}%", (iterations as f64 / total_range as f64) * 100.);
+            println!("{0}%", (iterations / total_range as f64) * 100.);
             println!("{lowest_location}");
         }
         iterations += 1.;
@@ -211,15 +211,15 @@ fn get_seed_range(input: &str) -> Vec<SeedRange> {
     seed_range_vec
 }
 
-fn get_better_seed_range(old_seed_range: SeedRange, _new_seed_range: SeedRange) -> SeedRange {
-    let mut new_seed_range = old_seed_range;
+fn get_better_seed_range(old_seed_range: SeedRange, new_seed_range: SeedRange) -> SeedRange {
+    let mut newer_seed_range = old_seed_range;
     if new_seed_range.min < old_seed_range.min {
-        new_seed_range.min = new_seed_range.min;
+        newer_seed_range.min = new_seed_range.min;
     }
     if new_seed_range.max > old_seed_range.max {
-        new_seed_range.max = new_seed_range.max;
+        newer_seed_range.max = new_seed_range.max;
     }
-    new_seed_range
+    newer_seed_range
 }
 
 #[cfg(test)]
