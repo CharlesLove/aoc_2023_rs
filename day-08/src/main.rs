@@ -1,12 +1,6 @@
 #![warn(clippy::pedantic)]
 use std::{collections::HashMap, fs};
 
-struct LocationNode {
-    location: String,
-    left: String,
-    right: String,
-}
-
 fn main() {
     let binding = fs::read_to_string("./day-08/inputs/input.txt").unwrap();
     let input = binding.trim();
@@ -16,22 +10,55 @@ fn main() {
 }
 
 fn part_one(input: &str) -> u32 {
-    let steps = 0;
-    let current_location = "AAA";
+    let mut steps = 0;
+    let mut current_location = "AAA";
     let final_destination = "ZZZ";
     let mut found = false;
     let instructions: Vec<char> = input.lines().next().unwrap().chars().collect();
 
-    //let mut location_map = HashMap::new();
+    let mut location_map: HashMap<String, HashMap<char, String>> = HashMap::new();
 
     // build mega hash map
     for line_num in 2..input.lines().count() {
-        println!("{}", input.lines().nth(line_num).unwrap());
+        let current_line = input.lines().nth(line_num).unwrap();
+
+        let two_halves: Vec<&str> = current_line.split(" = ").collect();
+
+        let current_location = two_halves[0].to_string();
+
+        let destinations: Vec<String> = two_halves[1]
+            .to_string()
+            .replace(['(', ')'], "")
+            .split(", ")
+            .map(str::to_string)
+            .collect();
+
+        let mut destination_map: HashMap<char, String> = HashMap::new();
+
+        destination_map.insert('L', destinations[0].to_string());
+        destination_map.insert('R', destinations[1].to_string());
+
+        location_map.insert(current_location, destination_map);
     }
 
-    // while !found {
-    //     todo!();
-    // }
+    let mut i = 0;
+    while !found {
+        steps += 1;
+
+        let current_instruction = instructions[i];
+
+        let next_location = &location_map[current_location][&current_instruction];
+
+        current_location = next_location;
+        if current_location == final_destination {
+            found = true;
+        }
+
+        i += 1;
+        if i >= instructions.len() {
+            i = 0;
+        }
+    }
 
     steps
 }
