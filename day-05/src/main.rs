@@ -48,8 +48,8 @@ fn _part_two(input: &str) -> u64 {
         better_seed_range = _get_better_seed_range(better_seed_range, seed_range);
     }
 
-    let total_range: u64 = better_seed_range.max - better_seed_range.min;
-    let mut iterations: f64 = 0.;
+    let _total_range: u64 = better_seed_range.max - better_seed_range.min;
+    //let mut _iterations: f64 = 0.;
 
     for cur_seed in better_seed_range.min..better_seed_range.max {
         let cur_location = get_location(cur_seed, input);
@@ -59,7 +59,7 @@ fn _part_two(input: &str) -> u64 {
             //println!("{0}%", (iterations * 1.0 / total_range as f64) * 100.);
             println!("{lowest_location}");
         }
-        iterations += 1.;
+        //_iterations += 1.;
     }
 
     lowest_location
