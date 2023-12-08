@@ -56,7 +56,7 @@ fn _part_two(input: &str) -> u64 {
 
         if cur_location < lowest_location {
             lowest_location = cur_location;
-            println!("{0}%", (iterations / total_range as f64) * 100.);
+            //println!("{0}%", (iterations * 1.0 / total_range as f64) * 100.);
             println!("{lowest_location}");
         }
         iterations += 1.;
