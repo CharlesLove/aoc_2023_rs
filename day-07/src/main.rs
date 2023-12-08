@@ -117,7 +117,7 @@ fn get_card_hand(input_cards: &str, input_bid: u32) -> CardHand {
     let mut base_value = 0;
     let mut bonus_value = 0;
 
-    // convert values using psuedo-hex
+    // convert values using pseudo-hex
     let mut i = 0;
     for cur_char in input_cards.chars().rev() {
         *card_counts_map.entry(cur_char.to_owned()).or_default() += 1;
@@ -182,7 +182,7 @@ fn get_card_hand_revised(input_cards: &str, input_bid: u32) -> CardHand {
     let mut base_value = 0;
     let mut bonus_value = 0;
 
-    // convert values using psuedo-hex
+    // convert values using pseudo-hex
     let mut i = 0;
     for cur_char in input_cards.chars().rev() {
         *card_counts_map.entry(cur_char.to_owned()).or_default() += 1;
@@ -269,12 +269,6 @@ fn get_card_hand_revised(input_cards: &str, input_bid: u32) -> CardHand {
     } else {
         panic!("Something went wrong when calculating this hand!");
     }
-
-    // bonus_value += joker_count * 2;
-
-    // if bonus_value > 6 {
-    //     bonus_value = 6;
-    // }
 
     CardHand {
         score: base_value + 16u32.pow(i) * bonus_value,
