@@ -219,7 +219,7 @@ fn get_card_hand_revised(input_cards: &str, input_bid: u32) -> CardHand {
     }
     // pair
     else if first_dup.1 == 2 && second_dup.1 < 2 {
-        if joker_count == 1 {
+        if joker_count == 1 || joker_count == 2 {
             // 3-kind
             bonus_value = 3
         } else {
