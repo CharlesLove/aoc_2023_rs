@@ -170,8 +170,6 @@ fn get_card_hand(input_cards: &str, input_bid: u32) -> CardHand {
         panic!("Something went wrong when calculating this hand!");
     }
 
-    
-
     CardHand {
         score: base_value + 16u32.pow(i) * bonus_value,
         bid: input_bid,
@@ -240,10 +238,7 @@ fn get_card_hand_revised(input_cards: &str, input_bid: u32) -> CardHand {
     }
     // 3-kind
     else if first_dup.1 == 3 && second_dup.1 < 2 {
-        if joker_count == 1 {
-            // 4-kind
-            bonus_value = 5;
-        } else if joker_count == 3 {
+        if joker_count == 1 || joker_count == 3 {
             // 4-kind
             bonus_value = 5;
         } else {
@@ -280,8 +275,6 @@ fn get_card_hand_revised(input_cards: &str, input_bid: u32) -> CardHand {
     // if bonus_value > 6 {
     //     bonus_value = 6;
     // }
-
-    
 
     CardHand {
         score: base_value + 16u32.pow(i) * bonus_value,
