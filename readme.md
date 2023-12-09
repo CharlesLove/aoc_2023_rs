@@ -15,7 +15,6 @@ for better performance
 
 # TODO 
 ## Add benchmarking to:
-- Day 1
 - Day 2
 - Day 3
 - Day 4

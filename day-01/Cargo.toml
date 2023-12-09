@@ -3,6 +3,16 @@ name = "day-01"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "solutions"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "benchmarks"
+harness = false
