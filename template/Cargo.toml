@@ -14,5 +14,5 @@ name = "solutions"
 criterion = "0.5.1"
 
 [[bench]]
-name = "solution_benchmarks"
+name = "benchmarks"
 harness = false
