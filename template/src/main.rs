@@ -3,8 +3,8 @@ use solutions::{get_input, part_one, part_two};
 fn main() {
     let input = get_input(false);
 
-    println!("Part 1:\n{}", part_one(input));
-    println!("Part 2:\n{}", part_two(input));
+    println!("Part 1:\n{}", part_one(&input));
+    println!("Part 2:\n{}", part_two(&input));
 }
 
 #[cfg(test)]
