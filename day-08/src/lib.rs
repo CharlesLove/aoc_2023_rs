@@ -1,6 +1,11 @@
+#![warn(clippy::pedantic)]
 use lcmx::lcmx;
 use std::{collections::HashMap, fs};
 
+/// # Panics
+///
+/// Will panic if file paths are incorrect
+#[must_use]
 pub fn get_input(is_bench: bool) -> String {
     let binding = if is_bench {
         fs::read_to_string("../day-08/inputs/input.txt").unwrap()
@@ -10,6 +15,9 @@ pub fn get_input(is_bench: bool) -> String {
     binding.trim().to_string()
 }
 
+/// # Panics
+///
+/// Will panic if input is incorrect
 pub fn part_one(input: &str) -> u64 {
     let mut steps = 0;
     let mut current_location = "AAA";
@@ -63,6 +71,10 @@ pub fn part_one(input: &str) -> u64 {
 
     steps
 }
+
+/// # Panics
+///
+/// Will panic if input is incorrect
 pub fn part_two(input: &str) -> u64 {
     let mut steps = 0;
     let mut current_locations: Vec<String> = Vec::new();

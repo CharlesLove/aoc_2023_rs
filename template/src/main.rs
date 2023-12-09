@@ -1,19 +1,10 @@
 #![warn(clippy::pedantic)]
-use std::fs;
-
+use solutions::{get_input, part_one, part_two};
 fn main() {
-    let binding = fs::read_to_string("./{{project-name}}/inputs/input.txt").unwrap();
-    let input = binding.trim();
+    let input = get_input(false);
 
     println!("Part 1:\n{}", part_one(input));
     println!("Part 2:\n{}", part_two(input));
-}
-
-fn part_one(input: &str) -> u32 {
-    0
-}
-fn part_two(input: &str) -> u32 {
-    0
 }
 
 #[cfg(test)]
