@@ -64,5 +64,27 @@ fn get_difference_vector(input_vec: Vec<i64>) -> (Vec<i64>, bool) {
 ///
 /// Will panic if input is incorrect
 pub fn part_two(input: &str) -> i64 {
-    0
+    let mut history_sum = 0;
+    for line in input.lines() {
+        println!("{line}");
+        // create vector of numbers
+        let original_line_vec: Vec<i64> = line
+            .split_whitespace()
+            .map(|x| x.parse().unwrap())
+            .collect();
+
+        // Find various differences
+        let mut line_difference_sum = *original_line_vec.first().unwrap();
+        let mut cur_difference_tuple = get_difference_vector(original_line_vec);
+        println!("{:?}", cur_difference_tuple.0);
+        while !cur_difference_tuple.1 {
+            line_difference_sum = cur_difference_tuple.0.first().unwrap() - line_difference_sum;
+            cur_difference_tuple = get_difference_vector(cur_difference_tuple.0);
+            println!("{:?}", cur_difference_tuple.0);
+        }
+        line_difference_sum = cur_difference_tuple.0.first().unwrap() - line_difference_sum;
+        println!("{line_difference_sum}");
+        history_sum += line_difference_sum;
+    }
+    -history_sum
 }

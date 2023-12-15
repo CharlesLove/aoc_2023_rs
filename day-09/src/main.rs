@@ -4,7 +4,8 @@ fn main() {
     let input = get_input(false);
 
     println!("Part 1:\n{}", part_one(&input));
-    // println!("Part 2:\n{}", part_two(&input));
+    // -210 not right answer
+    println!("Part 2:\n{}", part_two(&input));
 }
 
 #[cfg(test)]
@@ -18,8 +19,8 @@ mod tests {
     fn test_one() {
         assert_eq!(part_one(TEST_LINES1), 114);
     }
-    // #[test]
-    // fn test_two() {
-    //     assert_eq!(part_two(TEST_LINES1), 8);
-    // }
+    #[test]
+    fn test_two() {
+        assert_eq!(part_two(TEST_LINES1), 2);
+    }
 }
