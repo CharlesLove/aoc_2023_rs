@@ -7,9 +7,9 @@ use std::fs;
 #[must_use]
 pub fn get_input(is_bench: bool) -> String {
     let binding = if is_bench {
-        fs::read_to_string("../day-08/inputs/input.txt").unwrap()
+        fs::read_to_string("../{{project-name}}/inputs/input.txt").unwrap()
     } else {
-        fs::read_to_string("./day-08/inputs/input.txt").unwrap()
+        fs::read_to_string("./{{project-name}}/inputs/input.txt").unwrap()
     };
     binding.trim().to_string()
 }
