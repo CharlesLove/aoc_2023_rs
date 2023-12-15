@@ -5,11 +5,14 @@ fn main() {
 
     println!("Part 1:\n{}", part_one(&input));
     // -210 not right answer
+    // 210 is too low
     println!("Part 2:\n{}", part_two(&input));
 }
 
 #[cfg(test)]
 mod tests {
+    use solutions::get_difference_vector;
+
     use super::*;
     const TEST_LINES1: &str = r"0 3 6 9 12 15
 1 3 6 10 15 21
