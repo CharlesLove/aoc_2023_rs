@@ -1,6 +1,6 @@
 # Instructions
-## To test:
-`cargo test --bin day-xx`
+## To test (with console logging):
+`cargo test --bin day-xx -- --nocapture`
 
 ## To run:
 `cargo run --bin day-xx`
