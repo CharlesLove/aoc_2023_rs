@@ -11,8 +11,6 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use solutions::get_difference_vector;
-
     use super::*;
     const TEST_LINES1: &str = r"0 3 6 9 12 15
 1 3 6 10 15 21
